@@ -6,6 +6,8 @@ export type AddScheduleType = {
 export type ScheduleEventType={
   id:string,
   title:string,
-  scheduleData:string
+  date:string,
+  createdAt:string,
+  description:string
 }
 

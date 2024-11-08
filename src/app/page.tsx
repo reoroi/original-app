@@ -5,36 +5,24 @@ import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import { useRouter } from "next/navigation";
 import { AddScheduleType, ScheduleEventType } from "./Tyeps";
-import { format } from "date-fns";
-import {  useGetScheduleData } from "../../utils/getSuapbaseData";
+import { useGetScheduleData } from "../../utils/getSuapbaseData";
+import { onClickEvent } from "./function";
 
 const Home = () => {
   const router = useRouter();
   const [addEventTitle, setAddEventTitle] = useState("");
   const [addEventDate, setAddEventDate] = useState("");
-  const [testData, setTestData] = useState<AddScheduleType[]>([
-    { title: "テスト１", date: "2024-10-20" },
-    { title: "テスト2", date: "2024-10-20" },
-    {title:'テスト3',date:'2024-10-20'},
-    {title:'テスト4',date:'2024-10-20'},
-  ]);
   const handleDateClick = (arg: any) => {
     router.push("/AddSchedule");
   };
-  
+
   //supabaseからスケジュールイベントテーブルのデータを取得
-  const scheduleData:ScheduleEventType[]= useGetScheduleData()
+  const scheduleData: ScheduleEventType[] = useGetScheduleData();
 
   const onclickAddEvent = () => {
     // const newAddEvent = [...addEvent, { title: "テスト", date: "2024-10-20" }];
     // setAddEvent(newAddEvent);
   };
-
-  //これからクリックしたイベントの内容を表示させるコードを作成
-  const onClickEvent=()=>{
-
-  }
-
 
 
   return (
@@ -44,7 +32,7 @@ const Home = () => {
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           events={scheduleData}
-          eventClick={}
+          eventClick={(e)=>onClickEvent(e,router)} //各イベントクリック処理
           // initialEvents={addEvent} //追加したイベント内容
           eventContent={renderEventContent}
           dateClick={handleDateClick} //日付クリック処理

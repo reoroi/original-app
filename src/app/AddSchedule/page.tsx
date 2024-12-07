@@ -1,26 +1,57 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { supabase } from "../../../utils/supabase";
 
 const AddSchedule = () => {
   const router = useRouter();
-  const [addTitle,setAddTitle]=useState('')
+  const [addTitle, setAddTitle] = useState("");
+  const [addDate,setAddDate]=useState("")
+  const [addContent,setAddContent]=useState("")
+
+  useEffect(() => {
+    const formatDate = new Date().toLocaleDateString("ja-JP", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).replaceAll("/","-");
+    setAddDate(formatDate); // 日付を設定
+  }, []);
+
+  const AddDiary=async()=>{
+    const { error:addDiaryError } = await supabase
+  .from('DiaryData')
+  .insert({Title:addTitle,DiaryDate:addDate,DiaryContent:addContent})
+  if(addDiaryError){
+    console.log(addDiaryError)
+  }
+  }
+
 
   const clickHome = () => {
     router.push("/");
   };
+
   return (
     // flex flex-col items-center justify-center min-h-screen py-2 bg-gray-200
-    <div className="flex flex-col justify-center items-center max-h-full py-2 h-screen  ">
-      <div className="bg-red-900 m-3">
-        <button onClick={clickHome}>戻る</button>
-      <div className="flex justify-center flex-col">
-        <p>Title</p>
-        <input type="text" onChange={(e)=>setAddTitle(e.target.value)} placeholder="Titleを記入してください" />
-        <p>内容</p>
-        <textarea placeholder="内容を記入してください"></textarea>
-        <button>保存</button>
-      </div>
+    <div className="flex flex-col justify-center items-center max-h-full py-2 h-screen text-2xl	">
+      <input onChange={(e)=>setAddDate(e.target.value)} type="date" value={addDate}  className=""/>
+      <div className=" w-3/4	">
+        <button onClick={clickHome} className="block">戻る</button>
+        <div className="flex justify-center flex-col ">
+          <label>
+            Title
+          <input
+          className="ml-1"
+            type="text"
+            onChange={(e) => setAddTitle(e.target.value)}
+            placeholder="Titleを記入してください"
+          />
+          </label>
+          <textarea onChange={(e)=>setAddContent(e.target.value)} value={addContent} placeholder="内容を記入してください"  rows={6}></textarea>
+          <button onClick={AddDiary}>保存</button>
+        </div>
       </div>
     </div>
   );

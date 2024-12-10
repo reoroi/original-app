@@ -4,10 +4,10 @@ export type AddScheduleType = {
 
 }
 export type ScheduleEventType={
-  id:string,
+  Id:string,
   title:string,
   date:string,
   createdAt:string,
-  description:string
+  DiaryContent:string
 }
 

@@ -5,34 +5,35 @@ import { useSearchParams } from "next/navigation";
 import { ScheduleEventType } from "@/app/Tyeps";
 
 export const getSupabaseData = async () => {
-  const supabaseData = await supabase.from("ScheduleData").select("*");
+  const supabaseData = await supabase.from("DiaryData").select("*");
   return supabaseData;
 };
 
 //supabseのsucheleDataテーブルからデータを取得
 export const useGetScheduleData = () => {
-  const [scheduleData, setScheduleData] = useState<ScheduleEventType[]>([]);
+  const [getDiaryData, setGetDiaryData] = useState<ScheduleEventType[]>([]);
   useEffect(() => {
     const getSupabaseScheduleData = async () => {
       try {
-        const scheduleData = await getSupabaseData();
-        const scheduleEvent:ScheduleEventType[] = scheduleData.data?.map((item) => {
+        const diaryAllData = await getSupabaseData();
+        const scheduleEvent:ScheduleEventType[] = diaryAllData.data?.map((item) => {
           return {
-            id: item.id,
+            Id: item.id,
             title: item.Title,
-            date: item.ScheduleDate,
+            date: item.DiaryDate,
             createdAt:item.createdAt,
-            description:item.EventDescription
+            DiaryContent:item.DiaryContent
           };
         }) || []
-        setScheduleData(scheduleEvent);
+        console.log(scheduleEvent)
+        setGetDiaryData(scheduleEvent);
       } catch (error) {
         console.log(error, "scheduledataの取得でエラーが発生しました。");
       }
     };
     getSupabaseScheduleData();
   }, []);
-  return scheduleData;
+  return getDiaryData;
 };
 
 

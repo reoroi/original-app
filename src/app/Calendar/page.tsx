@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+"use client"
 import { ScheduleEventType } from '../Tyeps';
-import { useRouter } from 'next/router';
 import { useGetScheduleData } from '../../../utils/getSuapbaseData';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-const Home = () => {
+const Calendar = () => {
   const router = useRouter();
   const [addEventTitle, setAddEventTitle] = useState("");
   const [addEventDate, setAddEventDate] = useState("");
@@ -15,9 +16,9 @@ const Home = () => {
   };
 
     //supabaseからスケジュールイベントテーブルのデータを取得
-    const scheduleData: ScheduleEventType[] = useGetScheduleData();
-    console.log(scheduleData);
-  const onclickAddEvent = () => {
+    const diaryData: ScheduleEventType[] = useGetScheduleData();
+
+    const onclickAddEvent = () => {
     // const newAddEvent = [...addEvent, { title: "テスト", date: "2024-10-20" }];
     // setAddEvent(newAddEvent);
   };
@@ -28,7 +29,7 @@ const Home = () => {
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
-          events={scheduleData}
+          events={diaryData}
           // eventClick={(e)=>onClickEvent(e,router)} //各イベントクリック処理
           eventContent={renderEventContent}
           dateClick={handleDateClick} //日付クリック処理
@@ -36,12 +37,12 @@ const Home = () => {
           locale="ja" //日本語にする
         />
       </div>
-      <input
-        className="bg-blue-900"
-        type="text"
+      <button
+      onClick={()=>router.push("/")}
         value={addEventTitle}
-        onChange={(e) => setAddEventTitle(e.target.value)}
-      />
+      >
+      HOME
+      </button>
     </div>
   );
 }
@@ -57,4 +58,4 @@ function renderEventContent(eventInfo: any) {
 }
 
 
-export default Home
+export default Calendar

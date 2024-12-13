@@ -18,7 +18,7 @@ export const useGetScheduleData = () => {
         const diaryAllData = await getSupabaseData();
         const scheduleEvent:ScheduleEventType[] = diaryAllData.data?.map((item) => {
           return {
-            Id: item.id,
+            Id: item.Id,
             title: item.Title,
             date: item.DiaryDate,
             createdAt:item.createdAt,
@@ -39,21 +39,21 @@ export const useGetScheduleData = () => {
 
 //supabseのsucheleDataテーブルからIDごとのデータを取得
 export const getScheduleById = (targetID:string) => {
-  const [scheduleData, setScheduleData] = useState<ScheduleEventType[]|undefined>([]);
+  const [diaryDetailData, setDiaryDetailData] = useState<ScheduleEventType[]|undefined>([]);
   useEffect(() => {
     const getSupabaseScheduleData = async () => {
       try {
         //scheduleDataテーブルからデータの取得
-        const scheduleData = await getSupabaseData();
+        const diaryAllData = await getSupabaseData();
         //sucheleDataテーブルからIDごとのデータの取得
-        const scheduleEvent = scheduleData.data?.find((item) => item.id===Number(targetID));
-        setScheduleData(scheduleEvent);
+        const diaryDetailData = diaryAllData.data?.find((item) => item.Id===targetID);
+        setDiaryDetailData(diaryDetailData);
       } catch (error) {
         console.log(error, "getScheduleByIdの取得でエラーが発生しました。");
       }
     };
     getSupabaseScheduleData();
   }, []);
-  return scheduleData;
+  return diaryDetailData;
 };
 

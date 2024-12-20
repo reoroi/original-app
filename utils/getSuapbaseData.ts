@@ -25,7 +25,6 @@ export const useGetScheduleData = () => {
             DiaryContent:item.DiaryContent
           };
         }) || []
-        console.log(scheduleEvent)
         setGetDiaryData(scheduleEvent);
       } catch (error) {
         console.log(error, "scheduledataの取得でエラーが発生しました。");

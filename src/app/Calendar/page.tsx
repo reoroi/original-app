@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 const Calendar = () => {
   const router = useRouter();
   const [addEventTitle, setAddEventTitle] = useState("");
-  const [addEventDate, setAddEventDate] = useState("");
   const handleDateClick = (arg: any) => {
     router.push("/AddSchedule");
   };
@@ -18,10 +17,6 @@ const Calendar = () => {
     //supabaseからスケジュールイベントテーブルのデータを取得
     const diaryData: ScheduleEventType[] = useGetScheduleData();
 
-    const onclickAddEvent = () => {
-    // const newAddEvent = [...addEvent, { title: "テスト", date: "2024-10-20" }];
-    // setAddEvent(newAddEvent);
-  };
 
   return (
     <div className="">

@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useGetScheduleData } from "../../utils/getSuapbaseData";
 import { ScheduleEventType } from "./Tyeps";
 import Link from "next/link";
-import { format } from "path";
 import { useEffect, useState } from "react";
 
 const Home = () => {
@@ -22,7 +21,7 @@ const Home = () => {
     //データが不正またはデータが取得できなかった場合
     if (!diaryData || diaryData.length === 0) return;
 
-    //月ごとのグループオブジェクト変数
+    //月ごとのグループオブジェクト変数を宣言
     const groupData: { [date: string]: ScheduleEventType[] } = {};
     diaryData.forEach((data: ScheduleEventType) => {
       const groupDate = data.date.slice(0, 7);
@@ -31,9 +30,10 @@ const Home = () => {
       } else {
         groupData[groupDate] = [data]; // 配列を初期化し、最初の要素を同時に追加
       }
-      console.log("これはグループの配列", formatGroupData);
     });
+
     setFormatGroupData(groupData);
+    console.log(groupData)
   }, [diaryData]);
 
   //日付を月と日に分ける
@@ -41,7 +41,7 @@ const Home = () => {
     if (date) {
       //月と日だけを取り出す
       const monthDay = date.slice(5);
-      const formatDate = monthDay.replace("-", "/");
+      const formatDate:string = monthDay.replace("-", "/");
       return formatDate;
     }
   };
@@ -75,10 +75,9 @@ const Home = () => {
         <ul>
           {/* 日付ごとにグループ化したデータのkeyを抽出 */}
           {Object.keys(formatGroupData).map((groupDate) => (
-            <li>
+            <li key={groupDate}>
               <p className="bg-blue-500 mx-2">{groupDate.replace("-", "年")}月</p>
               {/* 日付ごとにグループ化したデータをkeyごとに抽出 */}
-              <p>
                 <ul>
                   {formatGroupData[groupDate].map((diary) => (
                     <li key={diary.Id}>
@@ -89,6 +88,7 @@ const Home = () => {
                               {formatDate(diary.date)}
                             </p>
                             <h2 className="text-3xl ml-3 ">{formatTitle(diary.title)}</h2>
+                            <p className="text-4xl ml-auto mr-5">{diary.DiaryEmotion}</p>
                           </div>
                           <p className="mt-3">{formatContent(diary.DiaryContent)}</p>
                         </Link>
@@ -96,7 +96,6 @@ const Home = () => {
                     </li>
                   ))}
                 </ul>
-              </p>
             </li>
           ))}
         </ul>

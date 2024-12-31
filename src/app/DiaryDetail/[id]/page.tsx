@@ -1,37 +1,40 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { ScheduleEventType } from "@/app/Tyeps";
 import { getScheduleById } from "../../../../utils/getSuapbaseData";
-import { dir } from "console";
-import { setMilliseconds } from "date-fns";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../../../utils/supabase";
-import { ResponseCookies } from "next/dist/compiled/@edge-runtime/cookies";
+import { DiaryEventType } from "@/app/Tyeps";
+import CustomizedTooltips from "@/app/Components/MaterialUI";
 
 //paramsでURLのIDを取得
 const DiaryDetail = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const [isEdit, setIsEdit] = useState<boolean>(false); //日記編集フラグ
-  const [editTitle, setEditTitle] = useState<string>();
-  const [editDate, setEditDate] = useState<string>("");
-  const [editContent, setEditContent] = useState<string>("");
+  const [editTitle, setEditTitle] = useState<string | undefined>("");
+  const [editDate, setEditDate] = useState<string | undefined>("");
+  const [editContent, setEditContent] = useState<string | undefined>("");
+  const [editEmotion, setEditEmotion] = useState<string>("");
 
   //supabaseからスケジュールイベントテーブルのデータを取得
-  const diaryDetailData: any = getScheduleById(params.id);
+  const diaryDetailData: DiaryEventType | undefined = getScheduleById(params.id);
+
 
   // 編集ボタン処理
   const diaryEdit = () => {
-    setIsEdit(true);
-    setEditTitle(diaryDetailData.Title);
-    setEditDate(diaryDetailData.DiaryDate);
-    setEditContent(diaryDetailData.DiaryContent);
+    if (diaryDetailData) {
+      setIsEdit(true);
+      setEditTitle(diaryDetailData?.Title);
+      setEditDate(diaryDetailData?.DiaryDate);
+      setEditContent(diaryDetailData?.DiaryContent);
+      setEditEmotion(diaryDetailData.DiaryEmotion)
+    }
   };
 
   //編集内容の保存処理
   const saveDiary = async () => {
-    const { error, data } = await supabase
+    const { error } = await supabase
       .from("DiaryData")
-      .update({ Title: editTitle, DiaryDate: editDate, DiaryContent: editContent })
+      .update({ Title: editTitle, DiaryDate: editDate, DiaryContent: editContent,DiaryEmotion:editEmotion })
       .eq("Id", params.id);
     if (error) {
       //supabaseへの登録でエラーが出た際の処理
@@ -59,19 +62,29 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
     <div>
       <button onClick={deleteDiary}>ゴミ箱</button>
       <button onClick={() => router.push("/")}>戻る</button>
-      {isEdit ? <p>編集中</p> : <button onClick={diaryEdit}>編集</button>}
+      {isEdit ? (
+        <button onClick={() => setIsEdit(false)}>編集中</button>
+      ) : (
+        <button onClick={diaryEdit}>編集</button>
+      )}
       {isEdit ? (
         <>
           {/* 編集中の画面表示 */}
-          <div className="flex flex-col justify-center items-center min-w-full max-h-full py-2 h-screen text-2xl max-w-[1200px] mx-auto">
+          <div className="flex flex-col items-center min-w-full max-h-full py-2 h-screen text-2xl max-w-[1200px] mx-auto mt-[72px]">
             <input
-              className="text-2xl block"
+              className="text-2xl block mb-[12px]"
               type="date"
               value={editDate}
               onChange={(e) => setEditDate(e.target.value)}
             />
-            <div className="w-5/6 flex flex-col">
-              <label htmlFor="title" className="flex">
+            <div className="flex flex-col w-5/6">
+              <div className="flex justify-center items-center ">
+                <CustomizedTooltips editEmotion={editEmotion} emotion="😁" setEmotion={setEditEmotion} />
+                <CustomizedTooltips editEmotion={editEmotion} emotion="😡" setEmotion={setEditEmotion} />
+                <CustomizedTooltips editEmotion={editEmotion} emotion="😢" setEmotion={setEditEmotion} />
+                <CustomizedTooltips editEmotion={editEmotion} emotion="😊" setEmotion={setEditEmotion} />
+              </div>
+              <label htmlFor="title" className="flex items-center text-4xl mt-5 mb-10">
                 Title
                 <input
                   className="ml-3 w-full"
@@ -91,16 +104,16 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
         </>
       ) : (
         <>
-          <div className="flex flex-col flex-col items-center min-h-screen max-w-[1200px] mx-auto ">
-            <p className="text-2xl mt-[72px] mb-[24px]">{diaryDetailData.DiaryDate}</p>
-            <div className="text-4xl w-5/6">
-              {/* 編集中ではないときの画面表示 */}
-              <div className="flex">
-                <p>Title</p>
-                <p className="ml-3 w-full">{diaryDetailData.Title}</p>
-                <p className="self-end">感情アイコン</p>
+          {/* 編集中ではないときの画面表示 */}
+          <div className="flex flex-col items-center min-w-full max-h-full py-2 h-screen text-2xl max-w-[1200px] mx-auto mt-[72px]">
+            <p className="text-2xl mb-[24px]">{diaryDetailData?.DiaryDate}</p>
+            <div className="flex flex-col item-center text-4xl w-5/6 ">
+              <div className="flex mt-5 mb-10 w-full ">
+                <p className="font-bold">Title</p>
+                <p className="font-bold ml-3 ">{diaryDetailData?.Title}</p>
+                <p className="ml-[56px]">{diaryDetailData?.DiaryEmotion}</p>
               </div>
-              <p className="text-2xl mt-10">{diaryDetailData.DiaryContent}</p>
+              <p className="text-2xl  wx-auto w-full break-all">{diaryDetailData?.DiaryContent}</p>
             </div>
           </div>
         </>

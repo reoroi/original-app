@@ -1,32 +1,42 @@
 "use client"
 import { ScheduleEventType } from '../Tyeps';
-import { useGetScheduleData } from '../../../utils/getSuapbaseData';
+import { useDiaryCalendar, useGetScheduleData } from '../../../utils/getSuapbaseData';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from "@fullcalendar/daygrid"; // a plugin!
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { EventClickArg } from '@fullcalendar/core/index.js';
 
 const Calendar = () => {
   const router = useRouter();
-  const [addEventTitle, setAddEventTitle] = useState("");
-  const handleDateClick = (arg: any) => {
+  const handleDateClick = () => {
     router.push("/AddSchedule");
   };
 
-    //supabaseからスケジュールイベントテーブルのデータを取得
-    const diaryData: ScheduleEventType[] = useGetScheduleData();
-
+  const testEvent={title:"これはテストになります",date:"2024-12-31"}
+  
+  //supabaseからスケジュールイベントテーブルのデータを取得
+  const diaryData: ScheduleEventType[] = useDiaryCalendar();
+  const event={testEvent,diaryData}
+  console.log(event)
+    // 対象イベントへの詳細画面へ遷移
+    const onClickEvent=(e:EventClickArg,router:AppRouterInstance)=>{
+    console.log(e)
+    // 対象イベントのIDを取得
+    const diaryEventID=e.event._def.extendedProps.Id  
+    router.push(`http://localhost:3000/DiaryDetail/${diaryEventID}`)
+  }
 
   return (
     <div className="">
-      <div className="">
+      <div className="w-full h-full">
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           events={diaryData}
-          // eventClick={(e)=>onClickEvent(e,router)} //各イベントクリック処理
-          eventContent={renderEventContent}
+          eventClick={(e)=>onClickEvent(e,router)} //各イベントクリック処理
+          // eventContent={renderEventContent}
           dateClick={handleDateClick} //日付クリック処理
           height="100vh" //高さを100％へ
           locale="ja" //日本語にする
@@ -34,7 +44,6 @@ const Calendar = () => {
       </div>
       <button
       onClick={()=>router.push("/")}
-        value={addEventTitle}
       >
       HOME
       </button>

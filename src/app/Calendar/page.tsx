@@ -7,6 +7,7 @@ import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClic
 import { useRouter } from 'next/navigation';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { EventClickArg } from '@fullcalendar/core/index.js';
+import Header from '../Components/Header';
 
 const Calendar = () => {
   const router = useRouter();
@@ -29,7 +30,8 @@ const Calendar = () => {
   }
 
   return (
-    <div className="">
+    <div className="bg-transparent">
+      <Header></Header>
       <div className="w-full h-full">
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}

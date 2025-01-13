@@ -26,17 +26,16 @@ export const AddDiary = async (
 export const handleClickEmotion =  (
   emotion: string,
   setEmotion: React.Dispatch<React.SetStateAction<string>>,
-  setIsEmotionClicked: React.Dispatch<React.SetStateAction<boolean>>,
   selectEmotion: string
 ) => {
-   setEmotion(emotion); // 状態を更新
-
-  // クリックされた感情と現在の編集中の感情を直接比較
-  if (emotion === selectEmotion) {
-    setIsEmotionClicked(true); // 一致している場合はクリック状態をtrueに
+    if (emotion === selectEmotion) {
+    // 現在の感情が選択済みの場合は選択解除（空文字列に設定）
+    setEmotion("");
   } else {
-    setIsEmotionClicked(false); // 一致していない場合はクリック状態をfalseに
+    // 現在の感情を選択
+    setEmotion(emotion);
   }
+
 };
 
 // 日記検索にて検索結果のステータスで検索結果表示を変更

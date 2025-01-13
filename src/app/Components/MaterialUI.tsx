@@ -19,21 +19,21 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
 const  CustomButton=styled(Button)({
   fontSize:36,
   padding:0,
-  
 })
 
 
 export default function CustomizedTooltips(
-  {editEmotion,emotion,setEmotion}:{editEmotion:string,emotion:string,setEmotion:React.Dispatch<React.SetStateAction<string>>}
+  {selectEmotion,emotion,setEmotion}:{selectEmotion:string,emotion:string,setEmotion:React.Dispatch<React.SetStateAction<string>>}
 ) {
+
+  
   useEffect(()=>{
-    if (emotion === editEmotion) {
-      setIsEmotionClicked(true); // 一致している場合はクリック状態をtrueに
+    if (emotion === selectEmotion) {
+      setIsEmotionClicked(true); // 一致している場合はクリック状態をtrueにし背景色の変更フラグを立てる
     } else {
       setIsEmotionClicked(false); // 一致していない場合はクリック状態をfalseに
     }
-  
-  },[editEmotion,emotion])
+  },[selectEmotion,emotion])
 
   // 選択された感情フラグ
   const [isEmotionClicked,setIsEmotionClicked]=useState<boolean>(false)
@@ -57,8 +57,9 @@ export default function CustomizedTooltips(
   return (
     <LightTooltip title={title}>
       <CustomButton sx={{
+        // 感情スタンプがクリックされている場合背景の変更
         background: isEmotionClicked ?  "rgb(129, 182, 252)":""
-      }} onClick={()=>handleClickEmotion(emotion,setEmotion,setIsEmotionClicked,editEmotion)} >
+      }} onClick={()=>handleClickEmotion(emotion,setEmotion,setIsEmotionClicked,selectEmotion)} >
         {emotion}
       </CustomButton>
     </LightTooltip>

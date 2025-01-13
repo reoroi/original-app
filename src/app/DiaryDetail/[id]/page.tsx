@@ -18,7 +18,6 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
   //supabaseからスケジュールイベントテーブルのデータを取得
   const diaryDetailData: DiaryEventType | undefined = getScheduleById(params.id);
 
-
   // 編集ボタン処理
   const diaryEdit = () => {
     if (diaryDetailData) {
@@ -26,7 +25,7 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
       setEditTitle(diaryDetailData?.Title);
       setEditDate(diaryDetailData?.DiaryDate);
       setEditContent(diaryDetailData?.DiaryContent);
-      setEditEmotion(diaryDetailData.DiaryEmotion)
+      setEditEmotion(diaryDetailData.DiaryEmotion);
     }
   };
 
@@ -34,7 +33,12 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
   const saveDiary = async () => {
     const { error } = await supabase
       .from("DiaryData")
-      .update({ Title: editTitle, DiaryDate: editDate, DiaryContent: editContent,DiaryEmotion:editEmotion })
+      .update({
+        Title: editTitle,
+        DiaryDate: editDate,
+        DiaryContent: editContent,
+        DiaryEmotion: editEmotion,
+      })
       .eq("Id", params.id);
     if (error) {
       //supabaseへの登録でエラーが出た際の処理
@@ -79,10 +83,26 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
             />
             <div className="flex flex-col w-5/6">
               <div className="flex justify-center items-center ">
-                <CustomizedTooltips editEmotion={editEmotion} emotion="😁" setEmotion={setEditEmotion} />
-                <CustomizedTooltips editEmotion={editEmotion} emotion="😡" setEmotion={setEditEmotion} />
-                <CustomizedTooltips editEmotion={editEmotion} emotion="😢" setEmotion={setEditEmotion} />
-                <CustomizedTooltips editEmotion={editEmotion} emotion="😊" setEmotion={setEditEmotion} />
+                <CustomizedTooltips
+                  selectEmotion={editEmotion}
+                  emotion="😁"
+                  setEmotion={setEditEmotion}
+                />
+                <CustomizedTooltips
+                  selectEmotion={editEmotion}
+                  emotion="😡"
+                  setEmotion={setEditEmotion}
+                />
+                <CustomizedTooltips
+                  selectEmotion={editEmotion}
+                  emotion="😢"
+                  setEmotion={setEditEmotion}
+                />
+                <CustomizedTooltips
+                  selectEmotion={editEmotion}
+                  emotion="😊"
+                  setEmotion={setEditEmotion}
+                />
               </div>
               <label htmlFor="title" className="flex items-center text-4xl mt-5 mb-10">
                 Title

@@ -11,9 +11,8 @@ const AddSchedule = () => {
   const [addTitle, setAddTitle] = useState<string>("");
   const [addDate, setAddDate] = useState<string>("");
   const [addContent, setAddContent] = useState<string>("");
-  const [addEmotion,setAddEmotion]=useState<string>("")
+  const [addEmotion, setAddEmotion] = useState<string>("");
 
-  
   useEffect(() => {
     const formatDate = new Date()
       .toLocaleDateString("ja-JP", {
@@ -25,7 +24,6 @@ const AddSchedule = () => {
     setAddDate(formatDate); // 日付を設定
   }, []);
 
-
   return (
     <div className="flex flex-col justify-center items-center max-h-full py-2 min-h-screen text-2xl	max-w-[1200px] mx-auto">
       <input
@@ -35,15 +33,13 @@ const AddSchedule = () => {
         className=""
       />
       <div className="flex justify-between w-1/3 ">
-      <CustomizedTooltips editEmotion={addEmotion} emotion="😁" setEmotion={setAddEmotion}/>
-      <CustomizedTooltips editEmotion={addEmotion} emotion="😡" setEmotion={setAddEmotion}/>
-      <CustomizedTooltips editEmotion={addEmotion} emotion="😢" setEmotion={setAddEmotion}/>
-      <CustomizedTooltips editEmotion={addEmotion} emotion="😊" setEmotion={setAddEmotion}/>
+        <CustomizedTooltips selectEmotion={addEmotion} emotion="😁" setEmotion={setAddEmotion} />
+        <CustomizedTooltips selectEmotion={addEmotion} emotion="😡" setEmotion={setAddEmotion} />
+        <CustomizedTooltips selectEmotion={addEmotion} emotion="😢" setEmotion={setAddEmotion} />
+        <CustomizedTooltips selectEmotion={addEmotion} emotion="😊" setEmotion={setAddEmotion} />
       </div>
       <div className="w-5/6 ">
-        <button onClick={() => router.push("/")}>
-          戻る
-        </button>
+        <button onClick={() => router.push("/")}>戻る</button>
         <div className="flex flex-col ">
           <button></button>
           <label className="flex">
@@ -61,7 +57,10 @@ const AddSchedule = () => {
             placeholder="内容を記入してください"
             rows={6}
           ></textarea>
-          <button className="self-center" onClick={()=>AddDiary(addTitle,addDate,addContent,addEmotion)}>
+          <button
+            className="self-center"
+            onClick={() => AddDiary(addTitle, addDate, addContent, addEmotion)}
+          >
             保存
           </button>
         </div>

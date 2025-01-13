@@ -63,7 +63,7 @@ const AddSchedule = () => {
             ></textarea>
           <button
             className="self-center"
-            onClick={() => AddDiary(addTitle, addDate, addContent, addEmotion)}
+            onClick={() => AddDiary(addTitle, addDate, addContent, addEmotion,setAddTitle,setAddDate,setAddContent,setAddEmotion)}
             >
             保存
           </button>

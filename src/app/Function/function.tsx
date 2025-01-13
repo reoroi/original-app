@@ -7,9 +7,15 @@ export const AddDiary = async (
   addTitle: string,
   addDate: string,
   addContent: string,
-  addEmotion: string
+  addEmotion: string,
+  setAddTitle: React.Dispatch<React.SetStateAction<string>>,
+  setAddDate: React.Dispatch<React.SetStateAction<string>>,
+  setAddContent: React.Dispatch<React.SetStateAction<string>>,
+  setAddEmotion: React.Dispatch<React.SetStateAction<string>>
 ) => {
-  const { error: addDiaryError } = await supabase
+  try{
+
+    await supabase
     .from("DiaryData")
     .insert({
       Title: addTitle,
@@ -17,8 +23,13 @@ export const AddDiary = async (
       DiaryContent: addContent,
       DiaryEmotion: addEmotion,
     });
-  if (addDiaryError) {
-    console.log(addDiaryError);
+    alert("日記を登録しました")
+    setAddTitle("")
+    setAddDate("")
+    setAddContent("")
+    setAddEmotion("")
+  }catch(error){
+    console.log(error)
   }
 };
 

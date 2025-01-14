@@ -5,6 +5,7 @@ import { supabase } from "../../../utils/supabase";
 import CustomizedTooltips from "../Components/MaterialUI";
 import { AddDiary } from "../Function/function";
 import { Button } from "@mui/material";
+import Header from "../Components/Header";
 
 const AddSchedule = () => {
   const router = useRouter();
@@ -25,13 +26,16 @@ const AddSchedule = () => {
   }, []);
 
   return (
+    <div>
+      <Header></Header>
+
     <div className="flex flex-col justify-center items-center max-h-full py-2 min-h-screen text-2xl	max-w-[1200px] mx-auto">
       <input
         onChange={(e) => setAddDate(e.target.value)}
         type="date"
         value={addDate}
         className=""
-      />
+        />
       <div className="flex justify-between w-1/3 ">
         <CustomizedTooltips selectEmotion={addEmotion} emotion="😁" setEmotion={setAddEmotion} />
         <CustomizedTooltips selectEmotion={addEmotion} emotion="😡" setEmotion={setAddEmotion} />
@@ -49,23 +53,24 @@ const AddSchedule = () => {
               type="text"
               onChange={(e) => setAddTitle(e.target.value)}
               placeholder="Titleを記入してください"
-            />
+              />
           </label>
           <textarea
             onChange={(e) => setAddContent(e.target.value)}
             value={addContent}
             placeholder="内容を記入してください"
             rows={6}
-          ></textarea>
+            ></textarea>
           <button
             className="self-center"
-            onClick={() => AddDiary(addTitle, addDate, addContent, addEmotion)}
-          >
+            onClick={() => AddDiary(addTitle, addDate, addContent, addEmotion,setAddTitle,setAddDate,setAddContent,setAddEmotion)}
+            >
             保存
           </button>
         </div>
       </div>
     </div>
+            </div>
   );
 };
 

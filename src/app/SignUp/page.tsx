@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
-const Home = () => {
+const page = () => {
 
   return (
     <div className="bg-[#DBEAFF] min-h-screen flex flex-col items-center justify-center">
@@ -18,4 +18,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default page

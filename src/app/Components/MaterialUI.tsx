@@ -26,13 +26,10 @@ export default function CustomizedTooltips(
   {selectEmotion,emotion,setEmotion}:{selectEmotion:string,emotion:string,setEmotion:React.Dispatch<React.SetStateAction<string>>}
 ) {
 
-  
+  // クリックされたとき選択された対象の感情スタンプの背景色を変更
   useEffect(()=>{
-    if (emotion === selectEmotion) {
-      setIsEmotionClicked(true); // 一致している場合はクリック状態をtrueにし背景色の変更フラグを立てる
-    } else {
-      setIsEmotionClicked(false); // 一致していない場合はクリック状態をfalseに
-    }
+        setIsEmotionClicked(emotion === selectEmotion);
+
   },[selectEmotion,emotion])
 
   // 選択された感情フラグ
@@ -59,7 +56,7 @@ export default function CustomizedTooltips(
       <CustomButton sx={{
         // 感情スタンプがクリックされている場合背景の変更
         background: isEmotionClicked ?  "rgb(129, 182, 252)":""
-      }} onClick={()=>handleClickEmotion(emotion,setEmotion,setIsEmotionClicked,selectEmotion)} >
+      }} onClick={()=>handleClickEmotion(emotion,setEmotion,selectEmotion)} >
         {emotion}
       </CustomButton>
     </LightTooltip>

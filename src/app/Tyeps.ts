@@ -20,3 +20,9 @@ export type DiaryEventType={
   DiaryContent:string,
   DiaryEmotion:string
 }
+
+export type AuthUserType={
+  userName:string,
+  email:string,
+  password:string
+}

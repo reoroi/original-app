@@ -30,6 +30,7 @@ export const CurrentUserProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.onAuthStateChange((event, session) => {
       // セッション情報からユーザが存在するか
       const sessionCheck = session?.user.user_metadata.first_name;
+      console.log(sessionCheck)
       if (!sessionCheck) {
         router.push("/SignIn");
       }

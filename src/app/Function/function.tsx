@@ -114,3 +114,15 @@ export const handleSignIn = async (signInData: AuthUserType,setSignInError: Reac
     }
   }
 };
+
+export const handleLogout=async()=>{
+  try{
+    const { error } = await supabase.auth.signOut()
+    if(error){
+      throw error
+    }
+  }catch(error){
+    alert("サインアウトでエラーが発生しました")
+  }
+
+}

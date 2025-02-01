@@ -1,21 +1,22 @@
-import Link from 'next/link'
-import React from 'react'
-
+"use client";
+import { useContext, useEffect } from "react";
+import Header from "./Components/Header";
+import DiaryList from "./Components/Diary";
+import { currentUserContext } from "./useAuth";
+import { supabase } from "../../utils/supabase";
 const Home = () => {
+  const currentUser = useContext(currentUserContext);
 
   return (
-    <div className="bg-[#DBEAFF] min-h-screen flex flex-col items-center justify-center">
-      <div className="bg-white p-3 flex flex-col shadow-2xl rounded-md">
-        <p className="text-2xl mx-auto">アカウント作成</p>
-          <p>ユーザ名</p>
-          <input type="text" className="border border-gray-300" />
-          <p>パスワード</p>
-          <input type="text" className="border border-gray-300" />
-          <button className="bg-blue-500 text-white mt-3 rounded ">ログイン</button>
-          <Link className="underline mx-auto text-xs mt-1  " href={"SignUp"}>すでにアカウントお持ちの方</Link>
+    <div className="min-h-screen bg-[#DBEAFF]">
+      <Header />
+      <div className="flex flex-col mt-10 min-h-screen">
+        <h1 className="text-5xl mx-auto mb-5">日記一覧</h1>
+        <ul>
+          <DiaryList />
+        </ul>
       </div>
     </div>
-  )
-}
-
-export default Home
+  );
+};
+export default Home;

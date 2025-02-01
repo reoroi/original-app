@@ -1,14 +1,12 @@
 "use client";
-import { Button } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Header from "../Components/Header";
-import DiaryList from "../Components/Diary";
-import { useGetScheduleData } from "../../../utils/getSuapbaseData";
-import { ScheduleEventType } from "../Tyeps";
 import UseDiarySearch from "./UseDiarySearch";
 import { renderSearchResult } from "../Function/function";
 import CustomizedTooltips from "../Components/MaterialUI";
 import SearchIcon from "@mui/icons-material/Search";
+import { currentUserContext } from "../useAuth";
+import { createContext } from "vm";
 
 const DiarySearch = () => {
   const [searchDate, setSearchDate] = useState("");

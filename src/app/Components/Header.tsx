@@ -19,7 +19,7 @@ const Header = () => {
       <Button className="w-full" onClick={() => router.push("/Calendar")}>
         <CalendarMonthIcon fontSize="large" />
       </Button>
-      <Button className="w-full" onClick={() => router.push("DiaryHome")}>
+      <Button className="w-full" onClick={() => router.push("/")}>
         <HomeIcon fontSize="large" />
       </Button>
       <Button className="w-full" onClick={() => router.push("/AddSchedule")}>

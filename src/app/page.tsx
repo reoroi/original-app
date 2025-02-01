@@ -1,11 +1,8 @@
-"use client";
 import { useContext, useEffect } from "react";
 import Header from "./Components/Header";
 import DiaryList from "./Components/Diary";
 import { currentUserContext } from "./useAuth";
-import { supabase } from "../../utils/supabase";
 const Home = () => {
-  const currentUser = useContext(currentUserContext);
 
   return (
     <div className="min-h-screen bg-[#DBEAFF]">

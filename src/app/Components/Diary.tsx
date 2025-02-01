@@ -3,7 +3,6 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { ScheduleEventType } from "../Tyeps";
 import { useGetScheduleData } from "../../../utils/getSuapbaseData";
-import Header from "./Header";
 
 //検索がかかった場合検索ワードがpropsとして渡される
 export const DiaryList = ({ searchList }: { searchList?: ScheduleEventType[] }) => {

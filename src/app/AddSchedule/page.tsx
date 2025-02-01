@@ -1,10 +1,8 @@
 "use client";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import { supabase } from "../../../utils/supabase";
 import CustomizedTooltips from "../Components/MaterialUI";
 import { AddDiary } from "../Function/function";
-import { Button } from "@mui/material";
 import Header from "../Components/Header";
 
 const AddSchedule = () => {
@@ -49,13 +47,15 @@ const AddSchedule = () => {
           <label className="flex">
             Title
             <input
-              className="ml-1 w-full"
+              className="ml-1 w-full outline-none"
               type="text"
               onChange={(e) => setAddTitle(e.target.value)}
               placeholder="Titleを記入してください"
               />
           </label>
           <textarea
+          className="outline-none
+"
             onChange={(e) => setAddContent(e.target.value)}
             value={addContent}
             placeholder="内容を記入してください"

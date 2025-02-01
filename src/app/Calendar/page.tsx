@@ -30,9 +30,9 @@ const Calendar = () => {
   }
 
   return (
-    <div className="bg-transparent">
+    <div className="max-h-screen">
       <Header></Header>
-      <div className="w-full h-full">
+      <div className="">
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
@@ -40,26 +40,11 @@ const Calendar = () => {
           eventClick={(e)=>onClickEvent(e,router)} //各イベントクリック処理
           // eventContent={renderEventContent}
           dateClick={handleDateClick} //日付クリック処理
-          height="100vh" //高さを100％へ
+          height="calc(100vh - 50px)" // ヘッダーの高さを引く
           locale="ja" //日本語にする
         />
       </div>
-      <button
-      onClick={()=>router.push("/")}
-      >
-      HOME
-      </button>
     </div>
-  );
-}
-
-//時間になった際に表示される内容が変わる
-function renderEventContent(eventInfo: any) {
-  return (
-    <>
-      <b>{eventInfo.timeText}</b>
-      <i>{eventInfo.event.title}</i>
-    </>
   );
 }
 

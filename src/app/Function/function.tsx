@@ -9,26 +9,90 @@ export const AddDiary = async (
   addDate: string,
   addContent: string,
   addEmotion: string,
+  addImage:File[],
   setAddTitle: React.Dispatch<React.SetStateAction<string>>,
   setAddDate: React.Dispatch<React.SetStateAction<string>>,
   setAddContent: React.Dispatch<React.SetStateAction<string>>,
-  setAddEmotion: React.Dispatch<React.SetStateAction<string>>
+  setAddEmotion: React.Dispatch<React.SetStateAction<string>>,
+  setAddImage: React.Dispatch<React.SetStateAction<File[]>>,
+  setImageError:React.Dispatch<React.SetStateAction<string>>,
 ) => {
-  try {
-    await supabase.from("DiaryData").insert({
+    const { error: insertError,data:DiaryData } =await supabase.from("DiaryData").insert({
       Title: addTitle,
       DiaryDate: addDate,
       DiaryContent: addContent,
       DiaryEmotion: addEmotion,
-    });
+      DiaryImage:[]
+    }).select()
+    if(insertError){
+      alert("日記投稿エラーが発生しました。再度試してください")
+      return
+    }
+
+  if(addImage.length>0){
+    // 選択された最大3つのファイルを順次supabaseへ登録
+    const updateImage=await Promise.all(addImage.map(async(image) =>  {
+      const imageURL=`Diary/${image.name}`
+      const {error:storageError}=await supabase.storage.from("DiaryImage").upload(imageURL, image); //supabaseのstorageへ写真を登録する
+
+      // 写真のアップロードにエラーがあるか
+      if (storageError) {
+        alert("supabaseへ写真登録処理に失敗しました");
+        return;
+      }
+      
+      //画像のURLを作成しテーブルに写真URLを更新
+      const { data: DiaryImageURL } = await supabase.storage
+      .from("DiaryImage")
+      .getPublicUrl(imageURL);
+
+
+  
+      return DiaryImageURL.publicUrl
+
+
+      // if (DiaryImageURL&&DiaryData) {
+      //   // 投稿データに画像URLを更新
+      //   const {error:updateError}=await supabase
+      //     .from("DiaryData")
+      //     .update({DiaryData: ['one', 'two', 'three', 'four']} )
+      //     .eq("Id", DiaryData[0].Id); // 投稿IDを基に更新
+      //   // 投稿成功後メッセージとクリア
+      //   if(updateError){
+      //     console.log(updateError)
+      //   }
+      //   alert("投稿に成功しました");
+      //   setAddImage([])
+      // }else{
+      //   setImageError("画像投稿に失敗しました。再度やり直してください")
+      
+      // }
+    }));
+
+    // supabaseへ写真などの追加処理が成功したら
+    if (updateImage&&DiaryData) {
+      // 投稿データに画像URLを更新
+      const {error:updateError}=await supabase
+        .from("DiaryData")
+        .update({DiaryImage: updateImage}) //map関数にて取得したURLをupdateする
+        .eq("Id", DiaryData[0].Id); // 投稿IDを基に更新
+      // 投稿成功後メッセージとクリア
+      if(updateError){
+        console.log(updateError)
+      }
+      alert("投稿に成功しました");
+      setAddImage([])
+    }else{
+      setImageError("画像投稿に失敗しました。再度やり直してください")
+    }
+  }
+  // 登録完了後
     alert("日記を登録しました");
-    setAddTitle("");
     setAddDate("");
     setAddContent("");
     setAddEmotion("");
-  } catch (error) {
-    console.log(error);
-  }
+    setAddTitle("")
+
 };
 
 //感情クリック処理
@@ -93,21 +157,24 @@ export const handleSignUp = async (
 };
 
 // SignIn処理
-export const handleSignIn = async (signInData: AuthUserType,setSignInError: React.Dispatch<React.SetStateAction<string>>,router:AppRouterInstance) => {
+export const handleSignIn = async (
+  signInData: AuthUserType,
+  setSignInError: React.Dispatch<React.SetStateAction<string>>,
+  router: AppRouterInstance
+) => {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email: signInData.email,
       password: signInData.password,
     });
     if (error) {
-      throw error
+      throw error;
     }
-    if(data){
-      router.push("/")
+    if (data) {
+      router.push("/");
     }
-    
   } catch (error) {
-    if (error instanceof Error && error?.message==="Invalid login credentials") {
+    if (error instanceof Error && error?.message === "Invalid login credentials") {
       setSignInError("メールアドレスまたはパスワードが間違えています");
     } else {
       setSignInError("ログインに失敗しました。しばらくして再度試してください");
@@ -115,14 +182,51 @@ export const handleSignIn = async (signInData: AuthUserType,setSignInError: Reac
   }
 };
 
-export const handleLogout=async()=>{
-  try{
-    const { error } = await supabase.auth.signOut()
-    if(error){
-      throw error
+export const handleLogout = async () => {
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      throw error;
     }
-  }catch(error){
-    alert("サインアウトでエラーが発生しました")
+  } catch (error) {
+    alert("サインアウトでエラーが発生しました");
   }
+};
 
-}
+export const handleClickImag = (ref: React.MutableRefObject<HTMLInputElement | null>) => {
+  ref.current?.click();
+};
+
+export const onchangeUploadImage = (
+  e: React.FormEvent<HTMLInputElement>,
+  addImage:File[],
+  viewImage:string[],
+  setViewImage: React.Dispatch<React.SetStateAction<string[]>>,
+  setAddImage: React.Dispatch<React.SetStateAction<File[]>>,
+  setCapacityError:React.Dispatch<React.SetStateAction<string>>
+) => {
+  // 選択した写真のファイルを取得
+  const targetImage = e.currentTarget.files?.[0];
+  
+  //選択されいている写真があるか
+  if (targetImage) {
+    // 選択した写真のファイルサイズが5MB以内であるか
+    if (targetImage.size <= 5242880) {
+      const imageURL=window.URL.createObjectURL(targetImage)
+      // 選択された写真が3つ以内か
+      if(viewImage.length>2){
+        alert("写真は3つまでです")
+        return viewImage
+      } else{
+        
+        const image=[...viewImage,imageURL]
+        setViewImage(image);
+        console.log(viewImage)
+        console.log(viewImage.length)
+      }
+      setAddImage((prevFile) => [...prevFile, targetImage]);
+    } else {
+      setCapacityError("写真のサイズは5MBまでです");
+    }
+  } 
+};

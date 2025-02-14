@@ -89,7 +89,7 @@ export const DiaryList = ({ searchList }: { searchList?: ScheduleEventType[] }) 
               {formatGroupData[groupDate].map((diary) => (
                 <li key={diary.Id}>
                   <div
-                    className="bg-white mx-5 my-2 rounded-md hover:bg-sky-200"
+                    className=" bg-[#DBEAFF] mx-5 my-2 rounded-md hover:bg-sky-200"
                   >
                     <Link href={`DiaryDetail/${diary.Id}`}>
                       <div className="flex items-center text-blue-00">

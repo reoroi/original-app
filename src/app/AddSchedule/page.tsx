@@ -1,9 +1,12 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import CustomizedTooltips from "../Components/MaterialUI";
-import { AddDiary } from "../Function/function";
+import { AddDiary, handleClickImag, onchangeUploadImage } from "../Function/function";
 import Header from "../Components/Header";
+import { getToday } from "./useGetDoday";
+import Image from "next/image";
+import { Button } from "@mui/material";
 
 const AddSchedule = () => {
   const router = useRouter();
@@ -11,66 +14,104 @@ const AddSchedule = () => {
   const [addDate, setAddDate] = useState<string>("");
   const [addContent, setAddContent] = useState<string>("");
   const [addEmotion, setAddEmotion] = useState<string>("");
+  const [addImage, setAddImage] = useState<File[]>([]);
+  const [viewImage, setViewImage] = useState<string[]>([]);
+  const [capacityError, setCapacityError] = useState<string>("");
+  const [imageError, setImageError] = useState<string>("");
+  const ref = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    const formatDate = new Date()
-      .toLocaleDateString("ja-JP", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      })
-      .replaceAll("/", "-");
-    setAddDate(formatDate); // 日付を設定
-  }, []);
+  // 今日の日付を取得しinputへ反映
+  getToday(setAddDate);
 
   return (
-    <div>
+    <div className="min-h-screen  bg-[#DBEAFF]">
       <Header></Header>
-
-    <div className="flex flex-col justify-center items-center max-h-full py-2 min-h-screen text-2xl	max-w-[1200px] mx-auto">
-      <input
-        onChange={(e) => setAddDate(e.target.value)}
-        type="date"
-        value={addDate}
-        className=""
-        />
-      <div className="flex justify-between w-1/3 ">
-        <CustomizedTooltips selectEmotion={addEmotion} emotion="😁" setEmotion={setAddEmotion} />
-        <CustomizedTooltips selectEmotion={addEmotion} emotion="😡" setEmotion={setAddEmotion} />
-        <CustomizedTooltips selectEmotion={addEmotion} emotion="😢" setEmotion={setAddEmotion} />
-        <CustomizedTooltips selectEmotion={addEmotion} emotion="😊" setEmotion={setAddEmotion} />
-      </div>
-      <div className="w-5/6 ">
-        <button onClick={() => router.push("/")}>戻る</button>
-        <div className="flex flex-col ">
-          <button></button>
-          <label className="flex">
-            Title
-            <input
-              className="ml-1 w-full outline-none"
-              type="text"
-              onChange={(e) => setAddTitle(e.target.value)}
-              placeholder="Titleを記入してください"
+      <div className="flex flex-col justify-center items-center min-h-[calc(100vh-50px)] py-2  text-2xl	max-w-[1200px] mx-auto">
+        <p className="text-red-500">{capacityError}</p>
+        <p className=" text-red-500">{imageError}</p>
+        <div className="flex ">
+          {addImage ? (
+            viewImage.map((imageURL, index) => (
+              <Image
+                key={index}
+                src={imageURL}
+                className="object-cover w-1/3 h-max"
+                alt="uploadImage"
+                width={100}
+                height={100}
               />
-          </label>
-          <textarea
-          className="outline-none
-"
-            onChange={(e) => setAddContent(e.target.value)}
-            value={addContent}
-            placeholder="内容を記入してください"
-            rows={6}
+            ))
+          ) : (
+            <></>
+          )}
+        </div>
+        <input
+          onChange={(e) =>
+            onchangeUploadImage(e, addImage, viewImage, setViewImage, setAddImage, setCapacityError)
+          }
+          ref={ref}
+          className="hidden"
+          type="file"
+          accept="image/*"
+          multiple
+        />
+        <button onClick={() => handleClickImag(ref)}>写真アイコン</button>
+        <input
+          onChange={(e) => setAddDate(e.target.value)}
+          type="date"
+          value={addDate}
+          className="bg-[#DBEAFF]"
+        />
+        <div className="flex justify-between w-1/3 ">
+          <CustomizedTooltips selectEmotion={addEmotion} emotion="😁" setEmotion={setAddEmotion} />
+          <CustomizedTooltips selectEmotion={addEmotion} emotion="😡" setEmotion={setAddEmotion} />
+          <CustomizedTooltips selectEmotion={addEmotion} emotion="😢" setEmotion={setAddEmotion} />
+          <CustomizedTooltips selectEmotion={addEmotion} emotion="😊" setEmotion={setAddEmotion} />
+        </div>
+        <div className="w-5/6 ">
+          <button onClick={() => router.push("/")}>戻る</button>
+          <div className="flex flex-col ">
+            <button></button>
+            <label className="flex">
+              <input
+                className="ml-1 w-full outline-none bg-[#DBEAFF]"
+                type="text"
+                value={addTitle}
+                onChange={(e) => setAddTitle(e.target.value)}
+                placeholder="Titleを記入してください"
+              />
+            </label>
+            <textarea
+              className="outline-none bg-[#DBEAFF]"
+              onChange={(e) => setAddContent(e.target.value)}
+              value={addContent}
+              placeholder="内容を記入してください"
+              rows={6}
             ></textarea>
-          <button
-            className="self-center"
-            onClick={() => AddDiary(addTitle, addDate, addContent, addEmotion,setAddTitle,setAddDate,setAddContent,setAddEmotion)}
+            <Button
+              className="self-center bg-b-500"
+              onClick={() =>
+                AddDiary(
+                  addTitle,
+                  addDate,
+                  addContent,
+                  addEmotion,
+                  addImage,
+                  setAddTitle,
+                  setAddDate,
+                  setAddContent,
+                  setAddEmotion,
+                  setAddImage,
+                  setImageError
+                )
+              }
             >
-            保存
-          </button>
+              保存
+            </Button>
+          </div>
         </div>
       </div>
     </div>
-            </div>
   );
 };
 

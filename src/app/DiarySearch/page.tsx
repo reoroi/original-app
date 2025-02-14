@@ -21,7 +21,7 @@ const DiarySearch = () => {
   }, [searchEmotion]);
 
   return (
-    <div className="min-h-screen bg-[#DBEAFF]">
+    <div className="min-h-screen ">
       <Header />
       <div>
         <div className="my-5">

@@ -27,25 +27,25 @@ const AddSchedule = () => {
     <div className="min-h-screen  bg-[#DBEAFF]">
       <Header></Header>
       <div className="flex flex-col justify-center items-center min-h-[calc(100vh-50px)] py-2  text-2xl	max-w-[1200px] mx-auto">
-      <div className="flex justify-center w-full h-[300px]">
-  {addImage.length > 0 ? (
-    viewImage.map((imageURL, index) => (
-      <div key={index} className="flex justify-center">
-        <Image
-          src={imageURL}
-          className="w-full h-full object-contain"
-          alt="uploadImage"
-          width={100}
-          height={100}
-        />
-      </div>
-    ))
-  ) : (
-    <></>
-  )}
+        <div className="flex justify-center w-full h-[300px]">
+          {addImage.length > 0 ? (
+            viewImage.map((imageURL, index) => (
+              <div key={index} className="flex justify-center">
+                <Image
+                  src={imageURL}
+                  className="w-full h-full object-contain"
+                  alt="uploadImage"
+                  width={100}
+                  height={100}
+                />
+              </div>
+            ))
+          ) : (
+            <></>
+          )}
         </div>
-          <p className="text-red-500">{capacityError}</p>
-          <p className=" text-red-500">{imageError}</p>
+        <p className="text-red-500">{capacityError}</p>
+        <p className=" text-red-500">{imageError}</p>
         <input
           onChange={(e) =>
             onchangeUploadImage(e, addImage, viewImage, setViewImage, setAddImage, setCapacityError)

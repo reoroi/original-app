@@ -18,7 +18,8 @@ export type DiaryEventType={
   DiaryDate:string,
   createdAt:string,
   DiaryContent:string,
-  DiaryEmotion:string
+  DiaryEmotion:string,
+  DiaryImage:string[]
 }
 
 export type AuthUserType={

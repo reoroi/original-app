@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "../../../../utils/supabase";
 import { DiaryEventType } from "@/app/Tyeps";
 import CustomizedTooltips from "@/app/Components/MaterialUI";
+import Header from "@/app/Components/Header";
 
 //paramsでURLのIDを取得
 const DiaryDetail = ({ params }: { params: { id: string } }) => {
@@ -63,7 +64,8 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
   };
 
   return (
-    <div>
+    <div className="bg-[#DBEAFF]">
+      <Header></Header>
       <button onClick={deleteDiary}>ゴミ箱</button>
       <button onClick={() => router.push("/")}>戻る</button>
       {isEdit ? (
@@ -75,8 +77,9 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
         <>
           {/* 編集中の画面表示 */}
           <div className="flex flex-col items-center min-w-full max-h-full py-2 h-screen text-2xl max-w-[1200px] mx-auto mt-[72px]">
+            sdsss
             <input
-              className="text-2xl block mb-[12px]"
+              className="text-2xl block mb-[12px] bg-[#DBEAFF]"
               type="date"
               value={editDate}
               onChange={(e) => setEditDate(e.target.value)}
@@ -107,13 +110,14 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
               <label htmlFor="title" className="flex items-center text-4xl mt-5 mb-10">
                 Title
                 <input
-                  className="ml-3 w-full"
+                  className="ml-3 w-full bg-[#DBEAFF]"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   id="title"
                 />
               </label>
               <textarea
+              className="bg-[#DBEAFF]"
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
                 rows={6}

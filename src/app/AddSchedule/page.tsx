@@ -27,19 +27,22 @@ const AddSchedule = () => {
     <div className="min-h-screen  bg-[#DBEAFF]">
       <Header></Header>
       <div className="flex flex-col justify-center items-center min-h-[calc(100vh-50px)] py-2  text-2xl	max-w-[1200px] mx-auto">
-        <div className="flex justify-center w-full h-[300px]">
-          {addImage.length > 0 ? (
-            viewImage.map((imageURL, index) => (
-              <div key={index} className="flex justify-center">
-                <Image
-                  src={imageURL}
-                  className="w-full h-full object-contain"
-                  alt="uploadImage"
-                  width={100}
-                  height={100}
-                />
-              </div>
-            ))
+        <div className="flex w-full">
+          {addImage.length > 0 ? ( //選択された写真があるか
+            viewImage.map(
+              //配列状になっているURLをの抽出
+              (imageURL, index) => (
+                <div key={index}>
+                  <Image
+                    src={imageURL}
+                    className="w-full h-full object-contain block"
+                    alt="uploadImage"
+                    width={100}
+                    height={100}
+                  />
+                </div>
+              )
+            )
           ) : (
             <></>
           )}

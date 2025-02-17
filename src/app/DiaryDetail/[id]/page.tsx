@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { getScheduleById } from "../../../../utils/getSuapbaseData";
+import { useGetScheduleById } from "../../../../utils/getSuapbaseData";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../../../utils/supabase";
 import { DiaryEventType } from "@/app/Tyeps";
 import CustomizedTooltips from "@/app/Components/MaterialUI";
 import Header from "@/app/Components/Header";
+import Image from "next/image";
 
 //paramsでURLのIDを取得
 const DiaryDetail = ({ params }: { params: { id: string } }) => {
@@ -17,7 +18,7 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
   const [editEmotion, setEditEmotion] = useState<string>("");
 
   //supabaseからスケジュールイベントテーブルのデータを取得
-  const diaryDetailData: DiaryEventType | undefined = getScheduleById(params.id);
+  const diaryDetailData: any= useGetScheduleById(params.id) ;
 
   // 編集ボタン処理
   const diaryEdit = () => {
@@ -63,8 +64,16 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
     }
   };
 
+  // Create a function to handle inserts
+const handleInserts = (payload:any) => {
+  console.log('Change received!', payload)
+}
+
+
+
+
   return (
-    <div className="bg-[#DBEAFF]">
+    <div className="min-h-screen bg-[#DBEAFF]">
       <Header></Header>
       <button onClick={deleteDiary}>ゴミ箱</button>
       <button onClick={() => router.push("/")}>戻る</button>
@@ -76,8 +85,7 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
       {isEdit ? (
         <>
           {/* 編集中の画面表示 */}
-          <div className="flex flex-col items-center min-w-full max-h-full py-2 h-screen text-2xl max-w-[1200px] mx-auto mt-[72px]">
-            sdsss
+          <div className="flex flex-col items-center py-2  text-2xl max-w-[1200px] mx-auto mt-[72px]">
             <input
               className="text-2xl block mb-[12px] bg-[#DBEAFF]"
               type="date"
@@ -117,7 +125,7 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
                 />
               </label>
               <textarea
-              className="bg-[#DBEAFF]"
+                className="bg-[#DBEAFF]"
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
                 rows={6}
@@ -129,7 +137,21 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
       ) : (
         <>
           {/* 編集中ではないときの画面表示 */}
-          <div className="flex flex-col items-center min-w-full max-h-full py-2 h-screen text-2xl max-w-[1200px] mx-auto mt-[72px]">
+          <div className="flex flex-col items-center min-w-full  py-2 h-screen text-2xl max-w-[1200px] mx-auto mt-[72px]">
+            <div className="flex w-full justify-center">
+              {/* {diaryDetailData?.DiaryImage.map((image:string, index:string) => (
+                <div>
+                <Image
+                className="w-full h-full object-contain"
+                key={index}
+                src={image}
+                alt="DiaryImage"
+                width={500}
+                height={500}
+                ></Image>
+                </div>
+              )) } */}
+            </div>
             <p className="text-2xl mb-[24px]">{diaryDetailData?.DiaryDate}</p>
             <div className="flex flex-col item-center text-4xl w-5/6 ">
               <div className="flex mt-5 mb-10 w-full ">

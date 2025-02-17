@@ -2,6 +2,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import { supabase } from "../../../utils/supabase";
 import DiaryList from "../Components/Diary";
 import { AuthUserType, ScheduleEventType } from "../Tyeps";
+import { v4 as uuidv4 } from "uuid";
 
 // supabaseへ日記を追加する処理
 export const AddDiary = async (
@@ -9,90 +10,78 @@ export const AddDiary = async (
   addDate: string,
   addContent: string,
   addEmotion: string,
-  addImage:File[],
+  addImage: File[],
   setAddTitle: React.Dispatch<React.SetStateAction<string>>,
   setAddDate: React.Dispatch<React.SetStateAction<string>>,
   setAddContent: React.Dispatch<React.SetStateAction<string>>,
   setAddEmotion: React.Dispatch<React.SetStateAction<string>>,
   setAddImage: React.Dispatch<React.SetStateAction<File[]>>,
-  setImageError:React.Dispatch<React.SetStateAction<string>>,
+  setImageError: React.Dispatch<React.SetStateAction<string>>
 ) => {
-    const { error: insertError,data:DiaryData } =await supabase.from("DiaryData").insert({
-      Title: addTitle,
-      DiaryDate: addDate,
-      DiaryContent: addContent,
-      DiaryEmotion: addEmotion,
-      DiaryImage:[]
-    }).select()
-    if(insertError){
-      alert("日記投稿エラーが発生しました。再度試してください")
-      return
-    }
+  try {
+    // 登録する写真があるか
+    if (addImage.length > 0) {
+      // 選択された最大3つのファイルを順次supabaseへ登録
+      const updateImage = await Promise.all(
+        addImage.map(async (image) => {
+          // supabaseのストレージへ登録する画像URL
+          const imageURL = `DiaryImage/${uuidv4()}`;
+          // supabaseのストレージへ画像を登録
+          const { error: storageError } = await supabase.storage
+            .from("DiaryImage")
+            .upload(imageURL, image); 
 
-  if(addImage.length>0){
-    // 選択された最大3つのファイルを順次supabaseへ登録
-    const updateImage=await Promise.all(addImage.map(async(image) =>  {
-      const imageURL=`Diary/${image.name}`
-      const {error:storageError}=await supabase.storage.from("DiaryImage").upload(imageURL, image); //supabaseのstorageへ写真を登録する
+          // 写真のアップロードにエラーがあるか
+          if (storageError) {
+            console.log(storageError)
+            throw new Error("storageError");
+          }
 
-      // 写真のアップロードにエラーがあるか
-      if (storageError) {
-        alert("supabaseへ写真登録処理に失敗しました");
-        return;
-      }
-      
-      //画像のURLを作成しテーブルに写真URLを更新
-      const { data: DiaryImageURL } = await supabase.storage
-      .from("DiaryImage")
-      .getPublicUrl(imageURL);
+          //テーブルに保存する画像のURLを作成
+          const { data: DiaryImageURL } = await supabase.storage
+            .from("DiaryImage")
+            .getPublicUrl(imageURL);
 
+          return DiaryImageURL.publicUrl;
+        })
+      );
 
-  
-      return DiaryImageURL.publicUrl
-
-
-      // if (DiaryImageURL&&DiaryData) {
-      //   // 投稿データに画像URLを更新
-      //   const {error:updateError}=await supabase
-      //     .from("DiaryData")
-      //     .update({DiaryData: ['one', 'two', 'three', 'four']} )
-      //     .eq("Id", DiaryData[0].Id); // 投稿IDを基に更新
-      //   // 投稿成功後メッセージとクリア
-      //   if(updateError){
-      //     console.log(updateError)
-      //   }
-      //   alert("投稿に成功しました");
-      //   setAddImage([])
-      // }else{
-      //   setImageError("画像投稿に失敗しました。再度やり直してください")
-      
-      // }
-    }));
-
-    // supabaseへ写真などの追加処理が成功したら
-    if (updateImage&&DiaryData) {
-      // 投稿データに画像URLを更新
-      const {error:updateError}=await supabase
+      //初めにsupabaseへ写真以外のデータを登録
+      const { error: insertError, data: DiaryData } = await supabase
         .from("DiaryData")
-        .update({DiaryImage: updateImage}) //map関数にて取得したURLをupdateする
-        .eq("Id", DiaryData[0].Id); // 投稿IDを基に更新
-      // 投稿成功後メッセージとクリア
-      if(updateError){
-        console.log(updateError)
+        .insert({
+          Title: addTitle,
+          DiaryDate: addDate,
+          DiaryContent: addContent,
+          DiaryEmotion: addEmotion,
+          DiaryImage: updateImage,
+        })
+        .select();
+      if (insertError) {
+        console.log(insertError)
+        throw new Error("insertError");
       }
-      alert("投稿に成功しました");
-      setAddImage([])
-    }else{
-      setImageError("画像投稿に失敗しました。再度やり直してください")
     }
-  }
-  // 登録完了後
-    alert("日記を登録しました");
-    setAddDate("");
-    setAddContent("");
-    setAddEmotion("");
-    setAddTitle("")
-
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.message === "storageError") {
+        alert("画像のアップロードに失敗しました。再度試してください。");
+      } else if (error.message === "insertError") {
+        alert("日記の登録に失敗しました。再度試してください。");
+      } else {
+        alert("予期しないエラーが発生しました。時間を置いて再度お試しください。");
+      }
+    } else {
+      alert("エラーが発生しました。時間を置き再度やり直してください");
+    }
+    console.log(error);
+    }
+  // 登録完了後alert及びinputのクリア
+  alert("日記を登録しました");
+  setAddDate("");
+  setAddContent("");
+  setAddEmotion("");
+  setAddTitle("");
 };
 
 //感情クリック処理
@@ -199,34 +188,33 @@ export const handleClickImag = (ref: React.MutableRefObject<HTMLInputElement | n
 
 export const onchangeUploadImage = (
   e: React.FormEvent<HTMLInputElement>,
-  addImage:File[],
-  viewImage:string[],
+  addImage: File[],
+  viewImage: string[],
   setViewImage: React.Dispatch<React.SetStateAction<string[]>>,
   setAddImage: React.Dispatch<React.SetStateAction<File[]>>,
-  setCapacityError:React.Dispatch<React.SetStateAction<string>>
+  setCapacityError: React.Dispatch<React.SetStateAction<string>>
 ) => {
   // 選択した写真のファイルを取得
   const targetImage = e.currentTarget.files?.[0];
-  
+
   //選択されいている写真があるか
   if (targetImage) {
     // 選択した写真のファイルサイズが5MB以内であるか
     if (targetImage.size <= 5242880) {
-      const imageURL=window.URL.createObjectURL(targetImage)
+      const imageURL = window.URL.createObjectURL(targetImage);
       // 選択された写真が3つ以内か
-      if(viewImage.length>2){
-        alert("写真は3つまでです")
-        return viewImage
-      } else{
-        
-        const image=[...viewImage,imageURL]
+      if (viewImage.length > 2) {
+        alert("写真は3つまでです");
+        return viewImage;
+      } else {
+        const image = [...viewImage, imageURL];
         setViewImage(image);
-        console.log(viewImage)
-        console.log(viewImage.length)
+        console.log(viewImage);
+        console.log(viewImage.length);
       }
       setAddImage((prevFile) => [...prevFile, targetImage]);
     } else {
       setCapacityError("写真のサイズは5MBまでです");
     }
-  } 
+  }
 };

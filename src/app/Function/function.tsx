@@ -1,8 +1,8 @@
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { supabase } from "../../../utils/supabase";
-import DiaryList from "../Components/Diary";
-import { AuthUserType, ScheduleEventType } from "../Tyeps";
+import { AuthUserType, DiaryEventType, ScheduleEventType } from "../Tyeps";
 import { v4 as uuidv4 } from "uuid";
+import DiaryList from "../Components/DiaryList";
 
 // supabaseへ日記を追加する処理
 export const AddDiary = async (
@@ -12,55 +12,36 @@ export const AddDiary = async (
   addEmotion: string,
   addImage: File[],
   setAddTitle: React.Dispatch<React.SetStateAction<string>>,
-  setAddDate: React.Dispatch<React.SetStateAction<string>>,
   setAddContent: React.Dispatch<React.SetStateAction<string>>,
   setAddEmotion: React.Dispatch<React.SetStateAction<string>>,
   setAddImage: React.Dispatch<React.SetStateAction<File[]>>,
-  setImageError: React.Dispatch<React.SetStateAction<string>>
+  setViewImage: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
   try {
-    // 登録する写真があるか
+    //テーブルへ保存する画像の変数を宣言
+    let uploadImage: { [key: string]: string }[] = [];
+
+    // アップロードする画像がある場合処理を実行
     if (addImage.length > 0) {
-      // 選択された最大3つのファイルを順次supabaseへ登録
-      const updateImage = await Promise.all(
-        addImage.map(async (image) => {
-          // supabaseのストレージへ登録する画像URL
-          const imageURL = `DiaryImage/${uuidv4()}`;
-          // supabaseのストレージへ画像を登録
-          const { error: storageError } = await supabase.storage
-            .from("DiaryImage")
-            .upload(imageURL, image); 
+      // supabaseへ画像を登録しテーブルに保存する画像オブジェクトを受け取る
+      uploadImage = await diaryUploadImage(addImage);
+    }
 
-          // 写真のアップロードにエラーがあるか
-          if (storageError) {
-            console.log(storageError)
-            throw new Error("storageError");
-          }
+    //supabaseへ日記のデータ登録
+    const { error: insertError } = await supabase
+      .from("DiaryData")
+      .insert({
+        Title: addTitle,
+        DiaryDate: addDate,
+        DiaryContent: addContent,
+        DiaryEmotion: addEmotion,
+        DiaryImage: uploadImage,
+      })
+      .select();
 
-          //テーブルに保存する画像のURLを作成
-          const { data: DiaryImageURL } = await supabase.storage
-            .from("DiaryImage")
-            .getPublicUrl(imageURL);
-
-          return DiaryImageURL.publicUrl;
-        })
-      );
-
-      //初めにsupabaseへ写真以外のデータを登録
-      const { error: insertError, data: DiaryData } = await supabase
-        .from("DiaryData")
-        .insert({
-          Title: addTitle,
-          DiaryDate: addDate,
-          DiaryContent: addContent,
-          DiaryEmotion: addEmotion,
-          DiaryImage: updateImage,
-        })
-        .select();
-      if (insertError) {
-        console.log(insertError)
-        throw new Error("insertError");
-      }
+    if (insertError) {
+      console.log(insertError);
+      throw new Error("insertError");
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -75,13 +56,192 @@ export const AddDiary = async (
       alert("エラーが発生しました。時間を置き再度やり直してください");
     }
     console.log(error);
-    }
+    return;
+  }
   // 登録完了後alert及びinputのクリア
   alert("日記を登録しました");
-  setAddDate("");
   setAddContent("");
   setAddEmotion("");
   setAddTitle("");
+  setAddImage([]);
+  setViewImage([]);
+};
+
+//supabaseへ写真を追加し公開URLの取得処理
+export const diaryUploadImage = async (addImage: File[],diaryImageObject?:{[key:string]:string}) => {
+  // アップロードする画像を格納するオブジェクト配列を宣言
+  let updateImage: { [key: string]: string }[] = [];
+
+  // 選択された最大3つのファイルを順次supabaseへ登録
+  updateImage = await Promise.all(
+    addImage.map(async (image) => {
+      // supabaseのストレージへ登録する画像URL
+      const supabaseImageURL = `DiaryImage/${uuidv4()}`;
+      // supabaseのストレージへ画像を登録
+      const { error: storageError } = await supabase.storage
+        .from("DiaryImage")
+        .upload(supabaseImageURL, image);
+
+      // 写真のアップロードにエラーがあるか
+      if (storageError) {
+        console.log(storageError);
+        throw new Error("storageError");
+      }
+
+      //テーブルに保存する画像のURLを作成
+      const { data: DiaryImageURL } = await supabase.storage
+        .from("DiaryImage")
+        .getPublicUrl(supabaseImageURL);
+
+      return { [supabaseImageURL]: DiaryImageURL.publicUrl };
+    })
+  );
+  return updateImage;
+};
+
+
+// supabaseから登録画像の削除
+export const imageDelete = async (
+  storagePath: string,
+  diaryImageObject: {[key:string]:string}[],
+  index: number,
+  { id }: { id: string }
+) => {
+  try {
+    // supabaseのストレージから画像の削除
+    const { data: deleteData, error: deleteError } = await supabase.storage
+      .from("DiaryImage")
+      .remove([storagePath]);
+
+    console.log(storagePath);
+    if (deleteData) {
+      console.log(deleteData, "削除成功");
+    }
+    if (deleteError) {
+      console.log(deleteError);
+      throw deleteError;
+    }
+
+    // クリック対象の画像データを削除
+    diaryImageObject.splice(index, 1);
+
+    // ストレージから画像の削除成功後更新
+    if (deleteData) {
+      const { data, error: updateError } = await supabase
+        .from("DiaryData")
+        .update({ DiaryImage: diaryImageObject })
+        .eq("Id", id);
+      if (updateError) {
+        console.log(updateError);
+        throw updateError;
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    alert("画像の削除に失敗しました");
+  }
+
+  console.log(storagePath,"supabaseのストレージURL")
+  console.log(diaryImageObject,"削除オブジェクト")
+};
+
+// 編集時の写真変更処理
+export const viewImageDelete = (
+  setViewImage: React.Dispatch<React.SetStateAction<string[]>>,
+  viewImage: string[],
+  setAddImage:React.Dispatch<React.SetStateAction<File[]>>,
+  addImage:File[],
+  index: number
+) => {
+  // 削除選択された表示画像を格納
+  const deleteViewImage = [...viewImage];
+  // 削除選択された登録画像を格納
+  const deleteAddImage=[...addImage]
+
+  // 表示画像の削除
+  deleteViewImage.splice(index, 1);
+  // 登録画像の削除
+  deleteAddImage.splice(index,1)
+
+  // 反映
+  setViewImage(deleteViewImage);
+  setAddImage(deleteAddImage)
+};
+
+// 編集保存ボタン
+export const saveDiary = async (
+  editTitle: string,
+  editDate: string,
+  editContent: string,
+  editEmotion: string,
+  addImage: File[],
+  params: { id: string },
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>,
+  setAddImage:React.Dispatch<React.SetStateAction<File[]>>,
+  setViewImage:React.Dispatch<React.SetStateAction<string[]>>,
+  diaryImageObject:{ [key: string]: string }[]|undefined
+) => {
+  //既存の画像とテーブルへ保存する画像の変数を宣言
+  let uploadImage: { [key: string]: string }[] = diaryImageObject ? [...diaryImageObject] : []
+
+  // アップロードする画像が選択されているか
+  if (addImage.length > 0) {
+    const newUploadedImages = await diaryUploadImage(addImage);
+    uploadImage = [...uploadImage, ...newUploadedImages]; // 既存の画像と新規画像を結合
+  }
+  console.log(uploadImage,"最終的なuploadImage")
+  //内容をアップデートする
+  const { error } = await supabase
+    .from("DiaryData")
+    .update({
+      Title: editTitle,
+      DiaryDate: editDate,
+      DiaryContent: editContent,
+      DiaryEmotion: editEmotion,
+      DiaryImage: uploadImage,
+    })
+    .eq("Id", params.id);
+
+  if (error) {
+    //supabaseへの登録でエラーが出た際の処理
+    console.log(error, "supabaseのアップデート処理でエラーが発生しました");
+  } else {
+    alert("日記を更新しました");
+    setIsEdit(false);
+    setAddImage([])
+    setViewImage([])
+  }
+};
+
+// 編集ボタン処理
+export const diaryEdit = (
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>,
+  setEditTitle: React.Dispatch<React.SetStateAction<string>>,
+  setEditDate: React.Dispatch<React.SetStateAction<string>>,
+  setEditContent: React.Dispatch<React.SetStateAction<string>>,
+  setEditEmotion: React.Dispatch<React.SetStateAction<string>>,
+  diaryDetailData: DiaryEventType | null
+) => {
+  if (diaryDetailData) {
+    setIsEdit(true);
+    setEditTitle(diaryDetailData?.Title);
+    setEditDate(diaryDetailData?.DiaryDate);
+    setEditContent(diaryDetailData?.DiaryContent);
+    setEditEmotion(diaryDetailData.DiaryEmotion);
+  }
+};
+
+// 編集時の日記削除ボタン
+export const deleteDiary = async (params: { id: string }, router: AppRouterInstance) => {
+  if (confirm("本当に削除してよろしいですか")) {
+    const { error } = await supabase.from("DiaryData").delete().eq("Id", params.id);
+    if (error) {
+      console.log(error, "supabaseでの削除処理にエラーが発生しました");
+    } else {
+      //エラーがなければHomeへ戻る
+      router.push("/");
+    }
+  }
 };
 
 //感情クリック処理
@@ -186,35 +346,43 @@ export const handleClickImag = (ref: React.MutableRefObject<HTMLInputElement | n
   ref.current?.click();
 };
 
+// 日記画像をinputへ追加処理
 export const onchangeUploadImage = (
   e: React.FormEvent<HTMLInputElement>,
-  addImage: File[],
   viewImage: string[],
   setViewImage: React.Dispatch<React.SetStateAction<string[]>>,
   setAddImage: React.Dispatch<React.SetStateAction<File[]>>,
-  setCapacityError: React.Dispatch<React.SetStateAction<string>>
+  diaryImageObject?: {[key:string]:string}[] //編集が画面でのみ渡される引数
 ) => {
   // 選択した写真のファイルを取得
   const targetImage = e.currentTarget.files?.[0];
 
+  // supabaseに保存されている写真数
+  const supabaseImageCount = diaryImageObject?.length || 0;
+
+  
+  console.log(targetImage, "function側の選択画像");
   //選択されいている写真があるか
   if (targetImage) {
     // 選択した写真のファイルサイズが5MB以内であるか
     if (targetImage.size <= 5242880) {
+      // ローカルで表示する写真画像のURLを作成
       const imageURL = window.URL.createObjectURL(targetImage);
-      // 選択された写真が3つ以内か
-      if (viewImage.length > 2) {
+
+      // 選択された写真が3つ以内か(編集時にはsupabsaeの写真数も入れる)
+      if (viewImage.length + supabaseImageCount > 2) {
         alert("写真は3つまでです");
         return viewImage;
       } else {
+        // 選択されている写真を格納
+        console.log(imageURL, "格納されている表示画像がある");
         const image = [...viewImage, imageURL];
         setViewImage(image);
-        console.log(viewImage);
-        console.log(viewImage.length);
       }
       setAddImage((prevFile) => [...prevFile, targetImage]);
     } else {
-      setCapacityError("写真のサイズは5MBまでです");
+      alert("写真のサイズは5MBまでです");
     }
   }
+
 };

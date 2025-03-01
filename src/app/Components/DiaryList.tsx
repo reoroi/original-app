@@ -12,7 +12,7 @@ export const DiaryList = ({ searchList }: { searchList?: ScheduleEventType[] }) 
   const [formatGroupData, setFormatGroupData] = useState<{ [date: string]: ScheduleEventType[] }>(
     {}
   );
-
+console.log("konnnitiha")
   //ChatGPT君
   useEffect(() => {
     //月ごとのグループオブジェクト変数を宣言

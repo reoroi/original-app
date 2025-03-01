@@ -16,19 +16,17 @@ const AddSchedule = () => {
   const [addEmotion, setAddEmotion] = useState<string>("");
   const [addImage, setAddImage] = useState<File[]>([]);
   const [viewImage, setViewImage] = useState<string[]>([]);
-  const [capacityError, setCapacityError] = useState<string>("");
-  const [imageError, setImageError] = useState<string>("");
   const ref = useRef<HTMLInputElement | null>(null);
 
   // 今日の日付を取得しinputへ反映
   getToday(setAddDate);
 
   return (
-    <div className="min-h-screen  bg-[#DBEAFF]">
+    <div className="min-h-screen bg-[#DBEAFF]">
       <Header></Header>
       <div className="flex flex-col justify-center items-center min-h-[calc(100vh-50px)] py-2  text-2xl	max-w-[1200px] mx-auto">
         <div className="flex w-full">
-          {addImage.length > 0 ? ( //選択された写真があるか
+          {viewImage.length > 0 ? ( //選択された写真があるか
             viewImage.map(
               //配列状になっているURLをの抽出
               (imageURL, index) => (
@@ -47,11 +45,9 @@ const AddSchedule = () => {
             <></>
           )}
         </div>
-        <p className="text-red-500">{capacityError}</p>
-        <p className=" text-red-500">{imageError}</p>
         <input
           onChange={(e) =>
-            onchangeUploadImage(e, addImage, viewImage, setViewImage, setAddImage, setCapacityError)
+            onchangeUploadImage(e, viewImage,  setViewImage, setAddImage)
           }
           ref={ref}
           className="hidden"
@@ -102,11 +98,10 @@ const AddSchedule = () => {
                   addEmotion,
                   addImage,
                   setAddTitle,
-                  setAddDate,
                   setAddContent,
                   setAddEmotion,
                   setAddImage,
-                  setImageError
+                  setViewImage
                 )
               }
             >

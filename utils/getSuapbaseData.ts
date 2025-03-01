@@ -67,7 +67,7 @@ export const useDiaryCalendar = () => {
 
 //supabseのsucheleDataテーブルからIDごとのデータを取得
 export const useGetScheduleById = (targetID: string) => {
-  const [diaryDetailData, setDiaryDetailData] = useState<DiaryEventType>();
+  const [diaryDetailData, setDiaryDetailData] = useState<DiaryEventType|null>(null);
 
   useEffect(() => {
     const getSupabaseScheduleData = async () => {
@@ -78,13 +78,15 @@ export const useGetScheduleById = (targetID: string) => {
         const targetData = diaryAllData.data?.find((item) => item.Id === targetID);
         if (targetData) {
           setDiaryDetailData(targetData);
+        }else{
+          return
         }
       } catch (error) {
         console.log(error, "getScheduleByIdの取得でエラーが発生しました。");
       }
     };
 
-    // supabaseノリアルタイム機能を使用して更新後のデータを返す
+    // supabaseリアルタイム機能を使用して更新後のデータを返す
     supabase
       .channel("DiaryData")
       .on(

@@ -58,3 +58,14 @@ export type EditFormPropsType = {
   diaryImageObject: { [key: string]: string }[] | undefined;
   params: { id: string };
 };
+
+export type DiaryDetailViewProps={
+  diaryDetailData:DiaryEventType | null
+  diaryImageObject: { [key: string]: string }[] | undefined;
+  setEditTitle: React.Dispatch<React.SetStateAction<string>>;
+  setEditDate: React.Dispatch<React.SetStateAction<string>>;
+  setEditContent: React.Dispatch<React.SetStateAction<string>>;
+  setEditEmotion: React.Dispatch<React.SetStateAction<string>>;
+  setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
+
+}

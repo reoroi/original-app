@@ -15,7 +15,7 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const currentUser = useContext(currentUserContext);
   return (
-    <div className="flex w- ">
+    <div className="flex">
       <Button className="w-full" onClick={() => router.push("/Calendar")}>
         <CalendarMonthIcon fontSize="large" />
       </Button>

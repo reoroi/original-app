@@ -6,7 +6,9 @@ import { AddDiary, handleClickImag, onchangeUploadImage } from "../Function/func
 import Header from "../Components/Header";
 import { getToday } from "./useGetDoday";
 import Image from "next/image";
-import { Button } from "@mui/material";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
+import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
+import CameraAltSharpIcon from '@mui/icons-material/CameraAltSharp';
 
 const AddSchedule = () => {
   const router = useRouter();
@@ -22,74 +24,107 @@ const AddSchedule = () => {
   getToday(setAddDate);
 
   return (
-    <div className="min-h-screen bg-[#DBEAFF]">
-      <Header></Header>
-      <div className="flex flex-col justify-center items-center min-h-[calc(100vh-50px)] py-2  text-2xl	max-w-[1200px] mx-auto">
-        <div className="flex w-full">
-          {viewImage.length > 0 ? ( //選択された写真があるか
-            viewImage.map(
-              //配列状になっているURLをの抽出
-              (imageURL, index) => (
-                <div key={index}>
-                  <Image
-                    src={imageURL}
-                    className="w-full h-full object-contain block"
-                    alt="uploadImage"
-                    width={100}
-                    height={100}
-                  />
-                </div>
-              )
-            )
-          ) : (
-            <></>
-          )}
-        </div>
-        <input
-          onChange={(e) =>
-            onchangeUploadImage(e, viewImage,  setViewImage, setAddImage)
-          }
-          ref={ref}
-          className="hidden"
-          type="file"
-          accept="image/*"
-          multiple
-        />
-        <button onClick={() => handleClickImag(ref)}>写真アイコン</button>
-        <input
-          onChange={(e) => setAddDate(e.target.value)}
-          type="date"
-          value={addDate}
-          className="bg-[#DBEAFF]"
-        />
-        <div className="flex justify-between w-1/3 ">
-          <CustomizedTooltips selectEmotion={addEmotion} emotion="😁" setEmotion={setAddEmotion} />
-          <CustomizedTooltips selectEmotion={addEmotion} emotion="😡" setEmotion={setAddEmotion} />
-          <CustomizedTooltips selectEmotion={addEmotion} emotion="😢" setEmotion={setAddEmotion} />
-          <CustomizedTooltips selectEmotion={addEmotion} emotion="😊" setEmotion={setAddEmotion} />
-        </div>
-        <div className="w-5/6 ">
-          <button onClick={() => router.push("/")}>戻る</button>
-          <div className="flex flex-col ">
-            <button></button>
-            <label className="flex">
-              <input
-                className="ml-1 w-full outline-none bg-[#DBEAFF]"
-                type="text"
-                value={addTitle}
-                onChange={(e) => setAddTitle(e.target.value)}
-                placeholder="Titleを記入してください"
-              />
+    <div className="min-h-screen bg-[#DBEAFF] w-full flex flex-col items-center">
+      <Header />
+      <div className="mx-auto w-5/6 max-w-[1300px] shadow-2xl bg-white rounded-[16px] mt-9 p-6">
+        {/* ヘッダータイトル */}
+        <h1 className="text-3xl font-bold text-center mb-6">日記を追加</h1>
+
+        <div className="py-2 text-2xl mx-8 mb-7">
+          <div className="flex justify-between my-8">
+            <button
+              className="bg-gray-500 text-2xl text-white flex items-center justify-center rounded-md h-10 w-12 hover:bg-gray-700"
+              onClick={() => handleClickImag(ref)}
+            >
+              <AddAPhotoIcon />
+            </button>
+            <button
+              className="bg-blue-500 text-2xl text-white flex items-center justify-center rounded-md h-10 w-12 hover:bg-blue-700"
+              onClick={() => router.push("/")}
+            >
+              <KeyboardReturnIcon fontSize="large" />
+            </button>
+          </div>
+
+          <div className="text-center mb-[24px]">
+            <label className="text-lg font-semibold">📅 日付を選択</label>
+            <input
+              onChange={(e) => setAddDate(e.target.value)}
+              type="date"
+              value={addDate}
+              className="block mx-auto mt-2 border border-gray-300 rounded-md px-3 py-2"
+            />
+          </div>
+
+          {/* 画像プレビュー */}
+          <div className="flex w-full justify-center">
+            {viewImage.length > 0 ? (
+              <div className="grid grid-cols-3 gap-2">
+                {viewImage.map((imageURL, index) => (
+                  <div className="mx-px text-center" key={index}>
+                    <Image
+                      src={imageURL}
+                      className="w-full object-contain rounded-lg"
+                      alt="uploadImage"
+                      width={100}
+                      height={100}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-500"><CameraAltSharpIcon />写真を追加してみましょう！</p>
+            )}
+          </div>
+
+          <input
+            onChange={(e) => onchangeUploadImage(e, viewImage, setViewImage, setAddImage)}
+            ref={ref}
+            className="hidden"
+            type="file"
+            accept="image/*"
+            multiple
+          />
+
+          {/* 感情選択 */}
+          <div className="flex justify-center items-center mt-4">
+            <p className="mr-4 text-lg font-semibold">今日の気分は？</p>
+            <CustomizedTooltips selectEmotion={addEmotion} emotion="😁" setEmotion={setAddEmotion} />
+            <CustomizedTooltips selectEmotion={addEmotion} emotion="😡" setEmotion={setAddEmotion} />
+            <CustomizedTooltips selectEmotion={addEmotion} emotion="😢" setEmotion={setAddEmotion} />
+            <CustomizedTooltips selectEmotion={addEmotion} emotion="😊" setEmotion={setAddEmotion} />
+          </div>
+
+          {/* 入力エリア */}
+          <div className="flex flex-col mt-4">
+            <label className="text-lg font-semibold" htmlFor="title">
+              タイトル
+            </label>
+            <input
+              className="w-full px-3 py-2 border border-gray-300 rounded-md mb-4"
+              type="text"
+              value={addTitle}
+              onChange={(e) => setAddTitle(e.target.value)}
+              placeholder="日記のタイトルを記入してください"
+            />
+
+            <label className="text-lg font-semibold mt-3" htmlFor="content">
+              内容
             </label>
             <textarea
-              className="outline-none bg-[#DBEAFF]"
+              id="content"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md mb-4"
               onChange={(e) => setAddContent(e.target.value)}
               value={addContent}
-              placeholder="内容を記入してください"
+              placeholder="今日の出来事や感じたことを書きましょう"
               rows={6}
             ></textarea>
-            <Button
-              className="self-center bg-b-500"
+          </div>
+
+          {/* 保存ボタン */}
+          <div className="flex justify-center mt-6">
+            <button
+              className="bg-green-500 text-white text-lg font-semibold px-6 py-3 rounded-md hover:bg-green-700 transition duration-300"
               onClick={() =>
                 AddDiary(
                   addTitle,
@@ -105,8 +140,8 @@ const AddSchedule = () => {
                 )
               }
             >
-              保存
-            </Button>
+              日記を保存する
+            </button>
           </div>
         </div>
       </div>

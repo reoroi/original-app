@@ -24,8 +24,6 @@ const DiaryEditForm: React.FC<EditFormPropsType> = ({
   return (
     <>
       {/* 編集中の画面表示 */}
-      <div className="py-2  text-2xl  mx-auto  mb-5">
-        <div className="mx-8 mb-2">
           {/* supabaseに格納している画像の表示 */}
           <div>
             <input
@@ -151,8 +149,6 @@ const DiaryEditForm: React.FC<EditFormPropsType> = ({
           >
             保存
           </button>
-        </div>
-      </div>
     </>
   );
 };

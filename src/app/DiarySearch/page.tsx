@@ -27,19 +27,24 @@ const DiarySearch = () => {
         <div className="my-5">
           <div className="text-center my-3 ">
             <input
-              className=" text-center bg-[#DBEAFF]"
+              className=" text-center"
               onChange={(e) => setSearchDate(e.target.value)}
               type="date"
             />
           </div>
-          <div className="flex justify-between items-center bg-white mx-auto w-4/6 text-2xl rounded-lg ">
-            <SearchIcon />
+          <label
+            htmlFor="search"
+            className="flex items-center bg-white mx-auto w-4/6 px-1 rounded-full  shadow-md border focus-within:ring-2 focus-within:ring-blue-400 mb-5"
+          >
+            <SearchIcon  />
             <input
-              className="bg-white w-full mx-0 rounded-lg"
+              id="search"
+              className="w-full m-1 bg-transparent focus:outline-none"
               onChange={(e) => setSearchKeyWord(e.target.value)}
               type="text"
+              placeholder="キーワードを検索してください"
             />
-          </div>
+          </label>
           <div className="mx-auto w-max">
             <CustomizedTooltips
               selectEmotion={searchEmotion}

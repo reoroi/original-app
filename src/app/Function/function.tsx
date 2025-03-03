@@ -386,3 +386,34 @@ export const onchangeUploadImage = (
   }
 
 };
+
+  //日付を月と日に分ける
+  export const formatDate = (date: string | undefined) => {
+    if (date) {
+      //月と日だけを取り出す
+      const monthDay = date.slice(5);
+      const formatDate: string = monthDay.replace("-", "/");
+      return formatDate;
+    }
+  };
+
+    // Titleを30字以内で表示
+    export const formatTitle = (title: string) => {
+      if (title.length > 30) {
+        const formatTitle = title.slice(0, 29);
+        return formatTitle;
+      } else {
+        return title;
+      }
+    };
+  
+    // Contentを60字以内で表示
+    export const formatContent = (Content: string) => {
+      if (Content.length > 60) {
+        const formatContent = Content.slice(0, 59);
+        return formatContent;
+      } else {
+        return Content;
+      }
+    };
+  

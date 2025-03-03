@@ -30,7 +30,7 @@ const DiaryDetailView: React.FC<DiaryDetailViewProps> = ({
                 return (
                   <div className="mx-px" key={index}>
                     <Image
-                      className="w-full object-contain"
+                      className="w-full object-contain rounded-lg"
                       src={imageURL}
                       alt="DiaryImage"
                       width={500}

@@ -4,8 +4,11 @@ import { supabase } from "./supabase";
 import { DiaryEventType, ScheduleEventType } from "@/app/Tyeps";
 import { parseUrl } from "next/dist/shared/lib/router/utils/parse-url";
 
+// 日記のすべてのデータを取得
 export const getSupabaseData = async () => {
-  const supabaseData = await supabase.from("DiaryData").select("*");
+  // DiaryDataからすべてのデータを降順で取得
+  const supabaseData = await supabase.from("DiaryData").select("*").order('DiaryDate', { ascending: false });
+  ;
   return supabaseData;
 };
 

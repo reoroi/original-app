@@ -3,16 +3,10 @@ import React, { useRef, useState } from "react";
 import { useGetScheduleById } from "../../../../utils/getSuapbaseData";
 import { useRouter } from "next/navigation";
 import { DiaryEventType } from "@/app/Tyeps";
-import CustomizedTooltips from "@/app/Components/MaterialUI";
 import Header from "@/app/Components/Header";
-import Image from "next/image";
 import {
   deleteDiary,
-  diaryEdit,
-  imageDelete,
   onchangeUploadImage,
-  saveDiary,
-  viewImageDelete,
 } from "@/app/Function/function";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";

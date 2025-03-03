@@ -2,13 +2,18 @@
 import { useRouter } from "next/navigation";
 import React, { useRef, useState } from "react";
 import CustomizedTooltips from "../Components/MaterialUI";
-import { AddDiary, handleClickImag, onchangeUploadImage } from "../Function/function";
+import {
+  AddDiary,
+  handleClickImag,
+  onchangeUploadImage,
+  viewImageDelete,
+} from "../Function/function";
 import Header from "../Components/Header";
 import { getToday } from "./useGetDoday";
 import Image from "next/image";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
-import CameraAltSharpIcon from '@mui/icons-material/CameraAltSharp';
+import CameraAltSharpIcon from "@mui/icons-material/CameraAltSharp";
 
 const AddSchedule = () => {
   const router = useRouter();
@@ -24,12 +29,11 @@ const AddSchedule = () => {
   getToday(setAddDate);
 
   return (
-    <div className="min-h-screen bg-[#DBEAFF] w-full flex flex-col items-center">
+    <div className="min-h-screen bg-[#DBEAFF] w-full ">
       <Header />
       <div className="mx-auto w-5/6 max-w-[1300px] shadow-2xl bg-white rounded-[16px] mt-9 p-6">
         {/* ヘッダータイトル */}
         <h1 className="text-3xl font-bold text-center mb-6">日記を追加</h1>
-
         <div className="py-2 text-2xl mx-8 mb-7">
           <div className="flex justify-between my-8">
             <button
@@ -45,9 +49,8 @@ const AddSchedule = () => {
               <KeyboardReturnIcon fontSize="large" />
             </button>
           </div>
-
           <div className="text-center mb-[24px]">
-            <label className="text-lg font-semibold">📅 日付を選択</label>
+            <label className="text-lg font-semibold">📅日付を選択</label>
             <input
               onChange={(e) => setAddDate(e.target.value)}
               type="date"
@@ -55,28 +58,35 @@ const AddSchedule = () => {
               className="block mx-auto mt-2 border border-gray-300 rounded-md px-3 py-2"
             />
           </div>
-
           {/* 画像プレビュー */}
-          <div className="flex w-full justify-center">
+          <div className="flex w-full justify-center ">
             {viewImage.length > 0 ? (
-              <div className="grid grid-cols-3 gap-2">
-                {viewImage.map((imageURL, index) => (
+              viewImage.map(
+                //配列状になっているURLをの抽出
+                (imageURL, index) => (
                   <div className="mx-px text-center" key={index}>
                     <Image
                       src={imageURL}
-                      className="w-full object-contain rounded-lg"
+                      className="w-full object-contain mx-1 rounded-lg"
                       alt="uploadImage"
                       width={100}
                       height={100}
                     />
+                    <button
+                      onClick={() =>
+                        viewImageDelete(setViewImage, viewImage, setAddImage, addImage, index)
+                      }
+                      className="bg-red-500 rounded-full text-base text-white w-6 h-6  active:bg-red-700  hover:bg-red-600 "
+                    >
+                      ✖
+                    </button>
                   </div>
-                ))}
-              </div>
+                )
+              )
             ) : (
-              <p className="text-center text-gray-500"><CameraAltSharpIcon />写真を追加してみましょう！</p>
+              <></>
             )}
           </div>
-
           <input
             onChange={(e) => onchangeUploadImage(e, viewImage, setViewImage, setAddImage)}
             ref={ref}
@@ -85,16 +95,29 @@ const AddSchedule = () => {
             accept="image/*"
             multiple
           />
-
-          {/* 感情選択 */}
           <div className="flex justify-center items-center mt-4">
             <p className="mr-4 text-lg font-semibold">今日の気分は？</p>
-            <CustomizedTooltips selectEmotion={addEmotion} emotion="😁" setEmotion={setAddEmotion} />
-            <CustomizedTooltips selectEmotion={addEmotion} emotion="😡" setEmotion={setAddEmotion} />
-            <CustomizedTooltips selectEmotion={addEmotion} emotion="😢" setEmotion={setAddEmotion} />
-            <CustomizedTooltips selectEmotion={addEmotion} emotion="😊" setEmotion={setAddEmotion} />
+            <CustomizedTooltips
+              selectEmotion={addEmotion}
+              emotion="😁"
+              setEmotion={setAddEmotion}
+            />
+            <CustomizedTooltips
+              selectEmotion={addEmotion}
+              emotion="😡"
+              setEmotion={setAddEmotion}
+            />
+            <CustomizedTooltips
+              selectEmotion={addEmotion}
+              emotion="😢"
+              setEmotion={setAddEmotion}
+            />
+            <CustomizedTooltips
+              selectEmotion={addEmotion}
+              emotion="😊"
+              setEmotion={setAddEmotion}
+            />
           </div>
-
           {/* 入力エリア */}
           <div className="flex flex-col mt-4">
             <label className="text-lg font-semibold" htmlFor="title">
@@ -120,8 +143,6 @@ const AddSchedule = () => {
               rows={6}
             ></textarea>
           </div>
-
-          {/* 保存ボタン */}
           <div className="flex justify-center mt-6">
             <button
               className="bg-green-500 text-white text-lg font-semibold px-6 py-3 rounded-md hover:bg-green-700 transition duration-300"

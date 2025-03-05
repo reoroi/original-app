@@ -13,7 +13,6 @@ import { getToday } from "./useGetDoday";
 import Image from "next/image";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
-import CameraAltSharpIcon from "@mui/icons-material/CameraAltSharp";
 import { currentUserContext } from "../useAuth";
 
 const AddSchedule = () => {

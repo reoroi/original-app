@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { AuthUserType } from "../Tyeps";
+import { AuthUserType } from "../Types";
 import { handleSignUp } from "../Function/function";
 import { useRouter } from "next/navigation";
 

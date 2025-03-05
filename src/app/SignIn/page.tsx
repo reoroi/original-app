@@ -3,7 +3,7 @@ import Link from "next/link";
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { AuthUserType } from "../Tyeps";
+import { AuthUserType } from "../Types";
 import { handleSignIn } from "../Function/function";
 import { currentUserContext } from "../useAuth";
 

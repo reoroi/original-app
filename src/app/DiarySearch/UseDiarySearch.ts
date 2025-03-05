@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { CalendarEventType, DiaryEventType } from "../Tyeps";
+import { CalendarEventType, DiaryEventType } from "../Types";
 import { useGetScheduleData } from "../../../utils/getSuapbaseData";
 
 const UseDiarySearch = (searchDate: string, searchKeyWord: string, searchEmotion: string) => {

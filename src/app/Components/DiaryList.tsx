@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { CalendarEventType } from "../Tyeps";
+import { CalendarEventType } from "../Types";
 import { useGetScheduleData } from "../../../utils/getSuapbaseData";
 import { formatContent, formatDate, formatTitle } from "../Function/function";
 import Image from "next/image";
@@ -44,7 +44,6 @@ export const DiaryList = ({ searchList }: { searchList?: CalendarEventType[] }) 
 
     // 日付ごとのソート
     setFormatGroupData(diaryGroupData);
-    console.log(formatGroupData);
   }, [diaryData, searchList]);
 
   return (

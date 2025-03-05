@@ -1,8 +1,8 @@
 import React from "react";
-import { imageDelete, onchangeUploadImage, saveDiary, viewImageDelete } from "../Function/function";
+import { imageDelete, saveDiary, viewImageDelete } from "../Function/function";
 import CustomizedTooltips from "./MaterialUI";
-import { EditFormPropsType } from "../Tyeps";
 import Image from "next/image";
+import { EditFormPropsType } from "../Types";
 
 const DiaryEditForm: React.FC<EditFormPropsType> = ({
   editTitle,
@@ -92,7 +92,7 @@ const DiaryEditForm: React.FC<EditFormPropsType> = ({
       </div>
       <div className="flex flex-col">
         <div className="flex justify-center items-center mt-3">
-        <p className="mr-4 text-lg font-semibold">当日の気分は？</p>
+          <p className="mr-4 text-lg font-semibold">当日の気分は？</p>
 
           <CustomizedTooltips
             selectEmotion={editEmotion}

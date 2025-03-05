@@ -1,7 +1,7 @@
 "use client";
 import { useContext, useEffect, useState } from "react";
 import { supabase } from "./supabase";
-import { DiaryEventType, CalendarEventType } from "@/app/Tyeps";
+import { DiaryEventType, CalendarEventType } from "@/app/Types";
 import { parseUrl } from "next/dist/shared/lib/router/utils/parse-url";
 import { currentUserContext } from "@/app/useAuth";
 

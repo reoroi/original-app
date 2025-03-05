@@ -2,7 +2,7 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { supabase } from "../../utils/supabase";
 import { useRouter } from "next/navigation";
-import { AuthContextType, AuthUserType } from "./Tyeps";
+import { AuthContextType, AuthUserType } from "./Types";
 
 export const currentUserContext = createContext<AuthContextType>({} as AuthContextType);
 

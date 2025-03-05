@@ -2,7 +2,7 @@
 import React, { useRef, useState } from "react";
 import { useGetScheduleById } from "../../../../utils/getSuapbaseData";
 import { useRouter } from "next/navigation";
-import { DiaryEventType } from "@/app/Tyeps";
+import { DiaryEventType } from "@/app/Types";
 import Header from "@/app/Components/Header";
 import {
   deleteDiary,

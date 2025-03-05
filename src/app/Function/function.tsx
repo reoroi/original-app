@@ -1,6 +1,6 @@
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { supabase } from "../../../utils/supabase";
-import { AuthUserType, DiaryEventType, CalendarEventType, AuthContextType } from "../Tyeps";
+import { AuthUserType, DiaryEventType, CalendarEventType, AuthContextType } from "../Types";
 import { v4 as uuidv4 } from "uuid";
 import DiaryList from "../Components/DiaryList";
 
@@ -120,7 +120,6 @@ export const imageDelete = async (
       .from("DiaryImage")
       .remove([storagePath]);
 
-    console.log(storagePath);
     if (deleteData) {
       console.log(deleteData, "削除成功");
     }
@@ -148,8 +147,6 @@ export const imageDelete = async (
     alert("画像の削除に失敗しました");
   }
 
-  console.log(storagePath, "supabaseのストレージURL");
-  console.log(diaryImageObject, "削除オブジェクト");
 };
 
 // 編集時の写真変更処理
@@ -379,7 +376,6 @@ export const onchangeUploadImage = (
   // supabaseに保存されている写真数
   const supabaseImageCount = diaryImageObject?.length || 0;
 
-  console.log(targetImage, "function側の選択画像");
   //選択されいている写真があるか
   if (targetImage) {
     // 選択した写真のファイルサイズが5MB以内であるか
@@ -393,7 +389,6 @@ export const onchangeUploadImage = (
         return viewImage;
       } else {
         // 選択されている写真を格納
-        console.log(imageURL, "格納されている表示画像がある");
         const image = [...viewImage, imageURL];
         setViewImage(image);
       }

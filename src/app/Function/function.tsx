@@ -73,9 +73,7 @@ export const AddDiary = async (
 };
 
 //supabaseへ写真を追加し公開URLの取得処理
-export const diaryUploadImage = async (
-  addImage: File[],
-) => {
+export const diaryUploadImage = async (addImage: File[]) => {
   // アップロードする画像を格納するオブジェクト配列を宣言
   let updateImage: { [key: string]: string }[] = [];
 
@@ -145,7 +143,6 @@ export const imageDelete = async (
     console.log(error);
     alert("画像の削除に失敗しました");
   }
-
 };
 
 // 編集時の写真変更処理
@@ -280,7 +277,7 @@ export const renderSearchResult = (searchList: CalendarEventType[], searchStatus
 export const handleSignUp = async (
   signUpData: AuthUserType,
   setSignUpError: React.Dispatch<React.SetStateAction<string>>,
-  router: AppRouterInstance,
+  router: AppRouterInstance
 ) => {
   try {
     const { data, error } = await supabase.auth.signUp({
@@ -346,6 +343,33 @@ export const handleSignIn = async (
   }
 };
 
+export const handleGuestLogin = async (
+  router: AppRouterInstance,
+  setAuthUser: React.Dispatch<React.SetStateAction<AuthUserType | null>>
+) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: "gest@gmail.com",
+    password: "gest@gmail.com",
+  });
+  if(error){
+    console.log(error)
+    return
+  }
+  if (data) {
+    // サイイン後各ユーザの情報を取得し格納
+    const signInUser = {
+      userID: data.user.id,
+      email: data.user.user_metadata.email,
+      userName: data.user.user_metadata.first_name,
+    } as AuthUserType;
+
+    setAuthUser(signInUser);
+
+    router.push("/");
+  }
+};
+
+// ログアウト処理
 export const handleLogout = async () => {
   try {
     const { error } = await supabase.auth.signOut();
@@ -353,7 +377,7 @@ export const handleLogout = async () => {
       throw error;
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     alert("サインアウトでエラーが発生しました");
   }
 };

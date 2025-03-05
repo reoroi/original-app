@@ -4,7 +4,7 @@ import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { AuthUserType } from "../Types";
-import { handleSignIn } from "../Function/function";
+import { handleGuestLogin, handleSignIn } from "../Function/function";
 import { currentUserContext } from "../useAuth";
 
 const SignIn = () => {
@@ -26,7 +26,9 @@ const SignIn = () => {
         <p className="text-2xl text-center">ログイン</p>
         <p className="text-red-500">{signInError}</p>
         <form
-          onSubmit={handleSubmit((signInData) =>   handleSignIn(signInData,setSignInError,router,setAuthUser))}
+          onSubmit={handleSubmit((signInData) =>
+            handleSignIn(signInData, setSignInError, router, setAuthUser)
+          )}
           className="flex flex-col"
         >
           <p className="mt-2">メール</p>
@@ -34,7 +36,8 @@ const SignIn = () => {
             {...register("email", {
               required: "メールを入力してください",
               pattern: {
-                value: /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/,
+                value:
+                  /^[A-Za-z0-9]{1}[A-Za-z0-9_.-]*@{1}[A-Za-z0-9_.-]{1,}\.[A-Za-z0-9]{1,}$/,
                 message: "正しいメールアドレスを入力してください",
               },
             })}
@@ -53,9 +56,17 @@ const SignIn = () => {
           />
           <p className="text-red-500">{errors.password?.message}</p>
 
-          <button type="submit" className="bg-blue-500 text-white mt-3 rounded">
+          <button type="submit" className="bg-blue-500 text-white mt-3 rounded p-2">
             ログイン
           </button>
+          <button
+            type="button"
+            onClick={()=>handleGuestLogin(router,setAuthUser)} // ゲストログインボタン
+            className="bg-gray-500 text-white mt-2 rounded p-2"
+          >
+            ゲストとしてログイン
+          </button>
+
           <Link className="underline mx-auto text-xs mt-1 block" href="SignUp">
             アカウント作成
           </Link>

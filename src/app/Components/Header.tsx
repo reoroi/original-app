@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CreateIcon from "@mui/icons-material/Create";
@@ -13,7 +13,7 @@ import { handleLogout } from "../Function/function";
 const Header = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const {authUser} = useContext(currentUserContext);
+  const { authUser } = useContext(currentUserContext);
   return (
     <div className="flex">
       <Button className="w-full" onClick={() => router.push("/Calendar")}>

@@ -5,7 +5,6 @@ import { CalendarEventType } from "../Types";
 import { useGetScheduleData } from "../../../utils/getSuapbaseData";
 import { formatContent, formatDate, formatTitle } from "../Function/function";
 import Image from "next/image";
-import { ImageResponse } from "next/server";
 
 //検索がかかった場合検索ワードがpropsとして渡される
 export const DiaryList = ({ searchList }: { searchList?: CalendarEventType[] }) => {
@@ -86,7 +85,7 @@ export const DiaryList = ({ searchList }: { searchList?: CalendarEventType[] }) 
                                 alt="DiaryImage"
                                 width={500}
                                 height={500}
-                                />
+                              />
                             </div>
                           )}
                         </div>

@@ -27,7 +27,7 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
   const ref = useRef<HTMLInputElement | null>(null);
 
   //supabaseからスケジュールイベントテーブルのデータを取得
-  let diaryDetailData: DiaryEventType | null = useGetScheduleById(params.id);
+  const  diaryDetailData: DiaryEventType | null = useGetScheduleById(params.id);
 
   //日記の画像オブジェクトを取得
   const diaryImageObject = diaryDetailData?.DiaryImage;
@@ -64,7 +64,7 @@ const DiaryDetail = ({ params }: { params: { id: string } }) => {
           {/* 写真追加input */}
           <input
             onChange={(e) =>
-              onchangeUploadImage(e, viewImage, setViewImage, setAddImage, diaryImageObject)
+              onchangeUploadImage(e, viewImage, setViewImage, setAddImage)
             }
             type="file"
             ref={ref}

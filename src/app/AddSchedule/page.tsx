@@ -9,11 +9,11 @@ import {
   viewImageDelete,
 } from "../Function/function";
 import Header from "../Components/Header";
-import { getToday } from "./useGetDoday";
 import Image from "next/image";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import { currentUserContext } from "../useAuth";
+import { useGetToday } from "./useGetDoday";
 
 const AddSchedule = () => {
   const router = useRouter();
@@ -29,7 +29,7 @@ const AddSchedule = () => {
   const {authUser} = useContext(currentUserContext);
 
   // 今日の日付を取得しinputへ反映
-  getToday(setAddDate);
+  useGetToday(setAddDate);
 
   return (
     <div className="min-h-screen bg-[#DBEAFF] w-full ">

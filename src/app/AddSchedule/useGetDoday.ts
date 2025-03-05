@@ -1,7 +1,7 @@
 "use client"
 import { useEffect } from "react";
 
-export const getToday=(setDate:React.Dispatch<React.SetStateAction<string>>)=>{
+export const useGetToday=(setDate:React.Dispatch<React.SetStateAction<string>>)=>{
 
   useEffect(() => {
     const formatDate = new Date()

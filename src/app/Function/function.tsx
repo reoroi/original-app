@@ -1,6 +1,6 @@
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { supabase } from "../../../utils/supabase";
-import { AuthUserType, DiaryEventType, CalendarEventType, AuthContextType } from "../Types";
+import { AuthUserType, DiaryEventType, CalendarEventType } from "../Types";
 import { v4 as uuidv4 } from "uuid";
 import DiaryList from "../Components/DiaryList";
 
@@ -75,7 +75,6 @@ export const AddDiary = async (
 //supabaseへ写真を追加し公開URLの取得処理
 export const diaryUploadImage = async (
   addImage: File[],
-  diaryImageObject?: { [key: string]: string }
 ) => {
   // アップロードする画像を格納するオブジェクト配列を宣言
   let updateImage: { [key: string]: string }[] = [];
@@ -133,7 +132,7 @@ export const imageDelete = async (
 
     // ストレージから画像の削除成功後更新
     if (deleteData) {
-      const { data, error: updateError } = await supabase
+      const { error: updateError } = await supabase
         .from("DiaryData")
         .update({ DiaryImage: diaryImageObject })
         .eq("Id", id);
@@ -354,6 +353,7 @@ export const handleLogout = async () => {
       throw error;
     }
   } catch (error) {
+    console.log(error)
     alert("サインアウトでエラーが発生しました");
   }
 };

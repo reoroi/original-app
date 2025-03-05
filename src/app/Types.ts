@@ -1,6 +1,3 @@
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { MutableRefObject } from "react";
-
 export type AddScheduleType = {
   title: string;
   date: string;

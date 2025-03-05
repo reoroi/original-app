@@ -27,7 +27,7 @@ const AddSchedule = () => {
   const ref = useRef<HTMLInputElement | null>(null); //画像input
 
   //現在のユーザ情報を取得
-  const currentUser = useContext(currentUserContext);
+  const {authUser} = useContext(currentUserContext);
 
   // 今日の日付を取得しinputへ反映
   getToday(setAddDate);
@@ -157,7 +157,7 @@ const AddSchedule = () => {
                   addContent,
                   addEmotion,
                   addImage,
-                  currentUser,
+                  authUser,
                   setAddTitle,
                   setAddContent,
                   setAddEmotion,

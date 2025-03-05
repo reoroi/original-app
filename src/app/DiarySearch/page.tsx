@@ -1,12 +1,11 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import Header from "../Components/Header";
 import UseDiarySearch from "./UseDiarySearch";
 import { renderSearchResult } from "../Function/function";
 import CustomizedTooltips from "../Components/MaterialUI";
 import SearchIcon from "@mui/icons-material/Search";
-import { currentUserContext } from "../useAuth";
-import { createContext } from "vm";
+import { useRouter } from "next/navigation";
 
 const DiarySearch = () => {
   const [searchDate, setSearchDate] = useState("");

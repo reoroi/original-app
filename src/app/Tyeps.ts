@@ -8,7 +8,7 @@ export type AddScheduleType = {
 //
 export type CalendarEventType = {
   Id: string;
-  UserID:string
+  UserID: string;
   title: string;
   date: string;
   createdAt: string;
@@ -20,7 +20,7 @@ export type CalendarEventType = {
 export type DiaryEventType = {
   Id: string;
   Title: string;
-  UserID:string
+  UserID: string;
   DiaryDate: string;
   createdAt: string;
   DiaryContent: string;
@@ -29,10 +29,15 @@ export type DiaryEventType = {
 };
 
 export type AuthUserType = {
-  userID:string
+  userID: string;
   userName: string;
   email: string;
   password: string;
+};
+
+export type AuthContextType = {
+  authUser: AuthUserType | null;
+  setAuthUser: React.Dispatch<React.SetStateAction<AuthUserType | null>>;
 };
 
 export type DiaryStateType = {
@@ -63,13 +68,12 @@ export type EditFormPropsType = {
   params: { id: string };
 };
 
-export type DiaryDetailViewProps={
-  diaryDetailData:DiaryEventType | null
+export type DiaryDetailViewProps = {
+  diaryDetailData: DiaryEventType | null;
   diaryImageObject: { [key: string]: string }[] | undefined;
   setEditTitle: React.Dispatch<React.SetStateAction<string>>;
   setEditDate: React.Dispatch<React.SetStateAction<string>>;
   setEditContent: React.Dispatch<React.SetStateAction<string>>;
   setEditEmotion: React.Dispatch<React.SetStateAction<string>>;
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>;
-
-}
+};

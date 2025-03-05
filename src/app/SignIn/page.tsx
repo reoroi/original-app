@@ -1,14 +1,17 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { AuthUserType } from "../Tyeps";
 import { handleSignIn } from "../Function/function";
+import { currentUserContext } from "../useAuth";
 
 const SignIn = () => {
   // エラーメッセージの表示変数
   const [signInError,setSignInError]=useState<string>("")
+  const {setAuthUser}=useContext(currentUserContext);
+  
   // ログイン成功時のrouter
   const router=useRouter()
   const {
@@ -23,7 +26,7 @@ const SignIn = () => {
         <p className="text-2xl text-center">ログイン</p>
         <p className="text-red-500">{signInError}</p>
         <form
-          onSubmit={handleSubmit((signInData) =>   handleSignIn(signInData,setSignInError,router))}
+          onSubmit={handleSubmit((signInData) =>   handleSignIn(signInData,setSignInError,router,setAuthUser))}
           className="flex flex-col"
         >
           <p className="mt-2">メール</p>
@@ -44,7 +47,6 @@ const SignIn = () => {
           <input
             {...register("password", {
               required: "パスワードを入力してください",
-              minLength: { value: 10, message: "パスワードは10文字以上です" },
             })}
             className="rounded-md border px-3 py-2 focus:border-2 focus:border-blue-400 focus:outline-none"
             type="password"

@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CreateIcon from "@mui/icons-material/Create";
@@ -13,7 +13,7 @@ import { handleLogout } from "../Function/function";
 const Header = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const currentUser = useContext(currentUserContext);
+  const {authUser} = useContext(currentUserContext);
   return (
     <div className="flex">
       <Button className="w-full" onClick={() => router.push("/Calendar")}>
@@ -43,8 +43,8 @@ const Header = () => {
           ${isOpen ? "right-0" : "right-[-400px]"} `}
       >
         <div className="flex flex-col p-5 text-2xl h-full ">
-          <p className="font-bold">{currentUser?.userName}</p>
-          <p>{currentUser?.email}</p>
+          <p className="font-bold">{authUser?.userName}</p>
+          <p>{authUser?.email}</p>
           <button
             onClick={handleLogout}
             className="bg-red-500 rounded-md mt-auto p-2 border-b-red-700 solid border-b-4 active:bg-red-700 active:border-none hover:bg-red-600"

@@ -2,9 +2,9 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { supabase } from "../../utils/supabase";
 import { useRouter } from "next/navigation";
-import { AuthUserType } from "./Tyeps";
+import { AuthContextType, AuthUserType } from "./Tyeps";
 
-export const currentUserContext = createContext<AuthUserType|null>(null);
+export const currentUserContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const CurrentUserProvider = ({ children }: { children: ReactNode }) => {
   const [authUser, setAuthUser] = useState<AuthUserType|null>(null);
@@ -14,7 +14,6 @@ export const CurrentUserProvider = ({ children }: { children: ReactNode }) => {
       //現在のセッション情報を取りに行く
       const { data: sessionData } = await supabase.auth.getSession();
       // セッション情報があればログインユーザ名を取得
-      console.log(sessionData)
       if (sessionData.session !== null) {
         const {
           data: { user },
@@ -25,13 +24,19 @@ export const CurrentUserProvider = ({ children }: { children: ReactNode }) => {
         getUser.email=user?.user_metadata.email
         getUser.userID=user?.id||""
         setAuthUser(getUser);
+        
+        if (authUser && authUser.userID !== getUser.userID) {
+          setAuthUser(null);
+          router.push("/SignIn"); // **ログインページにリダイレクト**
+        } else {
+          setAuthUser(getUser);
+        }
       }
-    };
+};
 
     supabase.auth.onAuthStateChange((event, session) => {
       // セッション情報からユーザが存在するか
       const sessionCheck = session?.user.user_metadata.first_name;
-      console.log(sessionCheck)
       if (!sessionCheck) {
         router.push("/SignIn");
       }
@@ -39,5 +44,5 @@ export const CurrentUserProvider = ({ children }: { children: ReactNode }) => {
 
     loginCheck();
   }, []);
-  return <currentUserContext.Provider value={authUser}>{children}</currentUserContext.Provider>;
+  return <currentUserContext.Provider value={{authUser,setAuthUser}}>{children}</currentUserContext.Provider>;
 };

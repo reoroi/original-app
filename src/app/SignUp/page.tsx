@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AuthUserType } from "../Tyeps";
 import { handleSignUp } from "../Function/function";
+import { useRouter } from "next/navigation";
 
 const SignUp = () => {
   const [signUpError, setSignUpError] = useState<string>("");
+  const router=useRouter()
+
   const {
     register,
-    watch,
     handleSubmit,
     formState: { errors },
   } = useForm<AuthUserType>({ mode: "onChange" });
@@ -21,7 +23,7 @@ const SignUp = () => {
         <p>{signUpError}</p>
         <form
           onSubmit={handleSubmit(
-            async (signUpData) => await handleSignUp(signUpData, setSignUpError)
+            async (signUpData) => await handleSignUp(signUpData, setSignUpError,router)
           )}
           className="flex flex-col"
         >
@@ -66,7 +68,7 @@ const SignUp = () => {
           <button type="submit" className="bg-blue-500 text-white mt-3 rounded ">
             作成
           </button>
-          <Link className="underline mx-auto text-xs mt-1 block " href={"/"}>
+          <Link className="underline mx-auto text-xs mt-1 block " href={"/SignIn"}>
             すでにアカウントお持ちの方
           </Link>
         </form>

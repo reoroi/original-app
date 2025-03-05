@@ -1,6 +1,6 @@
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { supabase } from "../../../utils/supabase";
-import { AuthUserType, DiaryEventType, CalendarEventType } from "../Tyeps";
+import { AuthUserType, DiaryEventType, CalendarEventType, AuthContextType } from "../Tyeps";
 import { v4 as uuidv4 } from "uuid";
 import DiaryList from "../Components/DiaryList";
 
@@ -11,13 +11,13 @@ export const AddDiary = async (
   addContent: string,
   addEmotion: string,
   addImage: File[],
-  currentUser:AuthUserType|null,
+  authUser: AuthUserType | null,
   setAddTitle: React.Dispatch<React.SetStateAction<string>>,
   setAddContent: React.Dispatch<React.SetStateAction<string>>,
   setAddEmotion: React.Dispatch<React.SetStateAction<string>>,
   setAddImage: React.Dispatch<React.SetStateAction<File[]>>,
   setViewImage: React.Dispatch<React.SetStateAction<string[]>>,
-  router:AppRouterInstance
+  router: AppRouterInstance
 ) => {
   try {
     //テーブルへ保存する画像の変数を宣言
@@ -34,7 +34,7 @@ export const AddDiary = async (
       .from("DiaryData")
       .insert({
         Title: addTitle,
-        UserID:currentUser?.userID,
+        UserID: authUser?.userID, //現在サイインしているユーザIDを格納
         DiaryDate: addDate,
         DiaryContent: addContent,
         DiaryEmotion: addEmotion,
@@ -68,12 +68,15 @@ export const AddDiary = async (
   setAddTitle("");
   setAddImage([]);
   setViewImage([]);
-  
-  router.push("/")
+
+  router.push("/");
 };
 
 //supabaseへ写真を追加し公開URLの取得処理
-export const diaryUploadImage = async (addImage: File[],diaryImageObject?:{[key:string]:string}) => {
+export const diaryUploadImage = async (
+  addImage: File[],
+  diaryImageObject?: { [key: string]: string }
+) => {
   // アップロードする画像を格納するオブジェクト配列を宣言
   let updateImage: { [key: string]: string }[] = [];
 
@@ -104,11 +107,10 @@ export const diaryUploadImage = async (addImage: File[],diaryImageObject?:{[key:
   return updateImage;
 };
 
-
 // supabaseから登録画像の削除
 export const imageDelete = async (
   storagePath: string,
-  diaryImageObject: {[key:string]:string}[],
+  diaryImageObject: { [key: string]: string }[],
   index: number,
   { id }: { id: string }
 ) => {
@@ -146,31 +148,31 @@ export const imageDelete = async (
     alert("画像の削除に失敗しました");
   }
 
-  console.log(storagePath,"supabaseのストレージURL")
-  console.log(diaryImageObject,"削除オブジェクト")
+  console.log(storagePath, "supabaseのストレージURL");
+  console.log(diaryImageObject, "削除オブジェクト");
 };
 
 // 編集時の写真変更処理
 export const viewImageDelete = (
   setViewImage: React.Dispatch<React.SetStateAction<string[]>>,
   viewImage: string[],
-  setAddImage:React.Dispatch<React.SetStateAction<File[]>>,
-  addImage:File[],
+  setAddImage: React.Dispatch<React.SetStateAction<File[]>>,
+  addImage: File[],
   index: number
 ) => {
   // 削除選択された表示画像を格納
   const deleteViewImage = [...viewImage];
   // 削除選択された登録画像を格納
-  const deleteAddImage=[...addImage]
+  const deleteAddImage = [...addImage];
 
   // 表示画像の削除
   deleteViewImage.splice(index, 1);
   // 登録画像の削除
-  deleteAddImage.splice(index,1)
+  deleteAddImage.splice(index, 1);
 
   // 反映
   setViewImage(deleteViewImage);
-  setAddImage(deleteAddImage)
+  setAddImage(deleteAddImage);
 };
 
 // 編集保存ボタン
@@ -182,19 +184,19 @@ export const saveDiary = async (
   addImage: File[],
   params: { id: string },
   setIsEdit: React.Dispatch<React.SetStateAction<boolean>>,
-  setAddImage:React.Dispatch<React.SetStateAction<File[]>>,
-  setViewImage:React.Dispatch<React.SetStateAction<string[]>>,
-  diaryImageObject:{ [key: string]: string }[]|undefined
+  setAddImage: React.Dispatch<React.SetStateAction<File[]>>,
+  setViewImage: React.Dispatch<React.SetStateAction<string[]>>,
+  diaryImageObject: { [key: string]: string }[] | undefined
 ) => {
   //既存の画像とテーブルへ保存する画像の変数を宣言
-  let uploadImage: { [key: string]: string }[] = diaryImageObject ? [...diaryImageObject] : []
+  let uploadImage: { [key: string]: string }[] = diaryImageObject ? [...diaryImageObject] : [];
 
   // アップロードする画像が選択されているか
   if (addImage.length > 0) {
     const newUploadedImages = await diaryUploadImage(addImage);
     uploadImage = [...uploadImage, ...newUploadedImages]; // 既存の画像と新規画像を結合
   }
-  console.log(uploadImage,"最終的なuploadImage")
+  console.log(uploadImage, "最終的なuploadImage");
   //内容をアップデートする
   const { error } = await supabase
     .from("DiaryData")
@@ -213,8 +215,8 @@ export const saveDiary = async (
   } else {
     alert("日記を更新しました");
     setIsEdit(false);
-    setAddImage([])
-    setViewImage([])
+    setAddImage([]);
+    setViewImage([]);
   }
 };
 
@@ -281,7 +283,8 @@ export const renderSearchResult = (searchList: CalendarEventType[], searchStatus
 // SignUp処理
 export const handleSignUp = async (
   signUpData: AuthUserType,
-  setSignUpError: React.Dispatch<React.SetStateAction<string>>
+  setSignUpError: React.Dispatch<React.SetStateAction<string>>,
+  router: AppRouterInstance,
 ) => {
   try {
     const { data, error } = await supabase.auth.signUp({
@@ -298,7 +301,6 @@ export const handleSignUp = async (
       throw error;
     }
     if (data) {
-      console.log(data);
       alert("アカウントを作成しました");
     }
   } catch (error) {
@@ -308,23 +310,35 @@ export const handleSignUp = async (
       setSignUpError("アカウント作成時にエラーが発生しました。");
     }
   }
+
+  router.push("SignIn");
 };
 
 // SignIn処理
 export const handleSignIn = async (
   signInData: AuthUserType,
   setSignInError: React.Dispatch<React.SetStateAction<string>>,
-  router: AppRouterInstance
+  router: AppRouterInstance,
+  setAuthUser: React.Dispatch<React.SetStateAction<AuthUserType | null>>
 ) => {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({
       email: signInData.email,
       password: signInData.password,
     });
+
     if (error) {
       throw error;
     }
     if (data) {
+      // サイイン後各ユーザの情報を取得し格納
+      const signInUser = {
+        userID: data.user.id,
+        email: data.user.user_metadata.email,
+        userName: data.user.user_metadata.first_name,
+      } as AuthUserType;
+
+      setAuthUser(signInUser);
       router.push("/");
     }
   } catch (error) {
@@ -357,7 +371,7 @@ export const onchangeUploadImage = (
   viewImage: string[],
   setViewImage: React.Dispatch<React.SetStateAction<string[]>>,
   setAddImage: React.Dispatch<React.SetStateAction<File[]>>,
-  diaryImageObject?: {[key:string]:string}[] //編集が画面でのみ渡される引数
+  diaryImageObject?: { [key: string]: string }[] //編集が画面でのみ渡される引数
 ) => {
   // 選択した写真のファイルを取得
   const targetImage = e.currentTarget.files?.[0];
@@ -365,7 +379,6 @@ export const onchangeUploadImage = (
   // supabaseに保存されている写真数
   const supabaseImageCount = diaryImageObject?.length || 0;
 
-  
   console.log(targetImage, "function側の選択画像");
   //選択されいている写真があるか
   if (targetImage) {
@@ -389,36 +402,34 @@ export const onchangeUploadImage = (
       alert("写真のサイズは5MBまでです");
     }
   }
-
 };
 
-  //日付を月と日に分ける
-  export const formatDate = (date: string | undefined) => {
-    if (date) {
-      //月と日だけを取り出す
-      const monthDay = date.slice(5);
-      const formatDate: string = monthDay.replace("-", "/");
-      return formatDate;
-    }
-  };
+//日付を月と日に分ける
+export const formatDate = (date: string | undefined) => {
+  if (date) {
+    //月と日だけを取り出す
+    const monthDay = date.slice(5);
+    const formatDate: string = monthDay.replace("-", "/");
+    return formatDate;
+  }
+};
 
-    // Titleを30字以内で表示
-    export const formatTitle = (title: string) => {
-      if (title.length > 30) {
-        const formatTitle = title.slice(0, 29);
-        return formatTitle;
-      } else {
-        return title;
-      }
-    };
-  
-    // Contentを60字以内で表示
-    export const formatContent = (Content: string) => {
-      if (Content.length > 60) {
-        const formatContent = Content.slice(0, 59);
-        return formatContent;
-      } else {
-        return Content;
-      }
-    };
-  
+// Titleを30字以内で表示
+export const formatTitle = (title: string) => {
+  if (title.length > 30) {
+    const formatTitle = title.slice(0, 29);
+    return formatTitle;
+  } else {
+    return title;
+  }
+};
+
+// Contentを60字以内で表示
+export const formatContent = (Content: string) => {
+  if (Content.length > 60) {
+    const formatContent = Content.slice(0, 59);
+    return formatContent;
+  } else {
+    return Content;
+  }
+};

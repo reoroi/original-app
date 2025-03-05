@@ -23,6 +23,7 @@ export const CurrentUserProvider = ({ children }: { children: ReactNode }) => {
         const getUser= {} as AuthUserType
         getUser.userName=user?.user_metadata.first_name;
         getUser.email=user?.user_metadata.email
+        getUser.userID=user?.id||""
         setAuthUser(getUser);
       }
     };

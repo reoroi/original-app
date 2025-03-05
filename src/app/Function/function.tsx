@@ -1,6 +1,6 @@
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { supabase } from "../../../utils/supabase";
-import { AuthUserType, DiaryEventType, ScheduleEventType } from "../Tyeps";
+import { AuthUserType, DiaryEventType, CalendarEventType } from "../Tyeps";
 import { v4 as uuidv4 } from "uuid";
 import DiaryList from "../Components/DiaryList";
 
@@ -11,11 +11,13 @@ export const AddDiary = async (
   addContent: string,
   addEmotion: string,
   addImage: File[],
+  currentUser:AuthUserType|null,
   setAddTitle: React.Dispatch<React.SetStateAction<string>>,
   setAddContent: React.Dispatch<React.SetStateAction<string>>,
   setAddEmotion: React.Dispatch<React.SetStateAction<string>>,
   setAddImage: React.Dispatch<React.SetStateAction<File[]>>,
-  setViewImage: React.Dispatch<React.SetStateAction<string[]>>
+  setViewImage: React.Dispatch<React.SetStateAction<string[]>>,
+  router:AppRouterInstance
 ) => {
   try {
     //テーブルへ保存する画像の変数を宣言
@@ -32,6 +34,7 @@ export const AddDiary = async (
       .from("DiaryData")
       .insert({
         Title: addTitle,
+        UserID:currentUser?.userID,
         DiaryDate: addDate,
         DiaryContent: addContent,
         DiaryEmotion: addEmotion,
@@ -65,6 +68,8 @@ export const AddDiary = async (
   setAddTitle("");
   setAddImage([]);
   setViewImage([]);
+  
+  router.push("/")
 };
 
 //supabaseへ写真を追加し公開URLの取得処理
@@ -260,7 +265,7 @@ export const handleClickEmotion = (
 };
 
 // 日記検索にて検索結果のステータスで検索結果表示を変更
-export const renderSearchResult = (searchList: ScheduleEventType[], searchStatus: number) => {
+export const renderSearchResult = (searchList: CalendarEventType[], searchStatus: number) => {
   switch (searchStatus) {
     case 0:
       return <DiaryList />;

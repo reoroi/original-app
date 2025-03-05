@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import CustomizedTooltips from "../Components/MaterialUI";
 import {
   AddDiary,
@@ -14,6 +14,7 @@ import Image from "next/image";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import CameraAltSharpIcon from "@mui/icons-material/CameraAltSharp";
+import { currentUserContext } from "../useAuth";
 
 const AddSchedule = () => {
   const router = useRouter();
@@ -23,7 +24,10 @@ const AddSchedule = () => {
   const [addEmotion, setAddEmotion] = useState<string>("");
   const [addImage, setAddImage] = useState<File[]>([]);
   const [viewImage, setViewImage] = useState<string[]>([]);
-  const ref = useRef<HTMLInputElement | null>(null);
+  const ref = useRef<HTMLInputElement | null>(null); //画像input
+
+  //現在のユーザ情報を取得
+  const currentUser = useContext(currentUserContext);
 
   // 今日の日付を取得しinputへ反映
   getToday(setAddDate);
@@ -153,11 +157,13 @@ const AddSchedule = () => {
                   addContent,
                   addEmotion,
                   addImage,
+                  currentUser,
                   setAddTitle,
                   setAddContent,
                   setAddEmotion,
                   setAddImage,
-                  setViewImage
+                  setViewImage,
+                  router
                 )
               }
             >

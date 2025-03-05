@@ -1,8 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { supabase } from "./supabase";
-import { DiaryEventType, ScheduleEventType } from "@/app/Tyeps";
+import { DiaryEventType, CalendarEventType } from "@/app/Tyeps";
 import { parseUrl } from "next/dist/shared/lib/router/utils/parse-url";
+import { currentUserContext } from "@/app/useAuth";
 
 // 日記のすべてのデータを取得
 export const getSupabaseData = async () => {
@@ -13,23 +14,36 @@ export const getSupabaseData = async () => {
 };
 
 //supabseのsucheleDataテーブルからデータを取得
-export const useGetScheduleData = () => {
-  const [getDiaryData, setGetDiaryData] = useState<ScheduleEventType[]>([]);
+export const useGetScheduleData =  () => {
+  const [getDiaryData, setGetDiaryData] = useState<CalendarEventType[]>([]);
+  // 現在のユーザIDを取得
   useEffect(() => {
     const getSupabaseScheduleData = async () => {
       try {
-        const diaryAllData = await getSupabaseData();
-        const scheduleEvent: ScheduleEventType[] =
-          diaryAllData.data?.map((item) => {
-            return {
-              Id: item.Id,
-              title: item.Title, //titleでないとCalendarに反応しない
-              date: item.DiaryDate, //dateでないとCalendarに反応しない
-              createdAt: item.createdAt,
-              DiaryContent: item.DiaryContent,
-              DiaryEmotion: item.DiaryEmotion,
-            };
-          }) || [];
+        // 現在のセッション情報を取得
+        const { error:sessionError,data: sessionData } = await supabase.auth.getSession();
+        if(sessionError){
+          console.log(sessionError,"セッション取得のエラーが発生")
+          throw sessionError
+        }
+
+        // 現在のユーザIDを取得
+      const loginUser=sessionData.session?.user.id
+      // すべてのデータを取得する
+      const diaryAllData = await getSupabaseData();
+        // ユーザごとのデータを取得し格納
+        const scheduleEvent: CalendarEventType[] = diaryAllData.data
+          ?.filter((filterItems) => filterItems.UserID === loginUser) // ユーザーIDでフィルタリング
+          .map((items) => ({
+            Id: items.Id,
+            UserID: items.UserID,
+            title: items.Title,
+            date: items.DiaryDate,
+            DiaryContent: items.DiaryContent,
+            DiaryEmotion: items.DiaryEmotion,
+            DiaryImage:items.DiaryImage,
+            createdAt: items.createdAt,
+          })) || [];
         setGetDiaryData(scheduleEvent);
       } catch (error) {
         console.log(error, "scheduledataの取得でエラーが発生しました。");
@@ -42,15 +56,16 @@ export const useGetScheduleData = () => {
 
 // カレンダーに感情スタンプを表示
 export const useDiaryCalendar = () => {
-  const [getDiaryData, setGetDiaryData] = useState<ScheduleEventType[]>([]);
+  const [getDiaryData, setGetDiaryData] = useState<CalendarEventType[]>([]);
   useEffect(() => {
     const getSupabaseScheduleData = async () => {
-      try {
-        const diaryAllData = await getSupabaseData();
-        const scheduleEvent: ScheduleEventType[] =
+      try {    
+          const diaryAllData = await getSupabaseData();
+        const scheduleEvent: CalendarEventType[] =
           diaryAllData.data?.map((item) => {
             return {
               Id: item.Id,
+              UserID:item.UserID,
               title: item.DiaryEmotion + item.Title, //titleでないとCalendarに反応しない,カレンダーに表示する感情を入れる
               date: item.DiaryDate, //dateでないとCalendarに反応しない
               createdAt: item.createdAt,

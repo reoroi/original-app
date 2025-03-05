@@ -6,26 +6,30 @@ export type AddScheduleType = {
   date: string;
 };
 //
-export type ScheduleEventType = {
+export type CalendarEventType = {
   Id: string;
+  UserID:string
   title: string;
   date: string;
   createdAt: string;
   DiaryContent: string;
   DiaryEmotion: string;
+  DiaryImage?: { [key: string]: string }[];
 };
 
 export type DiaryEventType = {
   Id: string;
   Title: string;
+  UserID:string
   DiaryDate: string;
   createdAt: string;
   DiaryContent: string;
   DiaryEmotion: string;
-  DiaryImage: { [key: string]: string }[];
+  DiaryImage?: { [key: string]: string }[];
 };
 
 export type AuthUserType = {
+  userID:string
   userName: string;
   email: string;
   password: string;

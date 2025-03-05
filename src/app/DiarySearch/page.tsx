@@ -1,11 +1,10 @@
 "use client";
-import React, {  useEffect, useState } from "react";
+import React, {   useState } from "react";
 import Header from "../Components/Header";
 import UseDiarySearch from "./UseDiarySearch";
 import { renderSearchResult } from "../Function/function";
 import CustomizedTooltips from "../Components/MaterialUI";
 import SearchIcon from "@mui/icons-material/Search";
-import { useRouter } from "next/navigation";
 
 const DiarySearch = () => {
   const [searchDate, setSearchDate] = useState("");
@@ -14,10 +13,6 @@ const DiarySearch = () => {
 
   // 日記検索関数の実行
   const { searchList, searchStatus } = UseDiarySearch(searchDate, searchKeyWord, searchEmotion);
-
-  useEffect(() => {
-    console.log(searchEmotion);
-  }, [searchEmotion]);
 
   return (
     <div className="min-h-screen ">

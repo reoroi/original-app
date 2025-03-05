@@ -1,13 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { ScheduleEventType } from "../Tyeps";
+import { useEffect, useState } from "react";
+import { CalendarEventType, DiaryEventType } from "../Tyeps";
 import { useGetScheduleData } from "../../../utils/getSuapbaseData";
-import DiarySearch from "./page";
 
 const UseDiarySearch = (searchDate: string, searchKeyWord: string, searchEmotion: string) => {
-  const [searchList, setSearchList] = useState<ScheduleEventType[]>([]);
+  const [searchList, setSearchList] = useState<CalendarEventType[]>([]);
   const [searchStatus, setSearchStatus] = useState(0);
-  const diaryData: ScheduleEventType[] = useGetScheduleData();
+  const diaryData: CalendarEventType[] = useGetScheduleData();
 
   const SEARCH_STATUS = {
     INITIAL: 0, // 初期画面（全データ表示）

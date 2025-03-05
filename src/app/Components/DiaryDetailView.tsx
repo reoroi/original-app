@@ -1,8 +1,8 @@
 import React from "react";
-import { DiaryDetailViewProps } from "../Tyeps";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import Image from "next/image";
 import { diaryEdit } from "../Function/function";
+import { DiaryDetailViewProps } from "../Types";
 
 const DiaryDetailView: React.FC<DiaryDetailViewProps> = ({
   diaryDetailData,
